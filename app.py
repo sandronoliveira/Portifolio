@@ -524,4 +524,5 @@ def obrigado():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)  # Apenas para desenvolvimento local
+    initialize_db()
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
