@@ -522,5 +522,35 @@ def initialize_db():
 def obrigado():
     return render_template('obrigado.html', user=User.query.first())
 
+# Apenas para garantir que o app não execute no modo de desenvolvimento
+import os
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # Verifica se estamos no Railway (variável PORT existe)
+    port = int(os.environ.get("PORT", 5000))
+    
+    # Se estivermos em ambiente de desenvolvimento local
+    if os.environ.get("RAILWAY_ENVIRONMENT") is None:
+        initialize_db()
+        app.run(debug=True)
+    else:
+        # Em produção, use o servidor wsgi
+        import gunicorn.app.base
+        
+        class StandaloneApplication(gunicorn.app.base.BaseApplication):
+            def __init__(self, app, options=None):
+                self.options = options or {}
+                self.application = app
+                super().__init__()
+                
+            def load_config(self):
+                for key, value in self.options.items():
+                    self.cfg.set(key.lower(), value)
+                    
+            def load(self):
+                return self.application
+        
+        options = {
+            'bind': f'0.0.0.0:{port}',
+            'workers': 4,
+        }
+        StandaloneApplication(app, options).run()
