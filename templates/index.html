@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h2 class="animated-text">Cientista de Dados & Especialista em IA</h2>
+        <p class="subtitle">Transformando dados em soluções inteligentes</p>
+        
+        <div class="hero-buttons">
+            <a href="{{ url_for('projects') }}" class="btn primary">Ver Projetos</a>
+            <a href="{{ url_for('contact') }}" class="btn secondary">Contato</a>
+        </div>
+    </div>
+</section>
+
+<section class="about">
+    <div class="section-header">
+        <h2>Sobre Mim</h2>
+        <div class="accent-line"></div>
+    </div>
+    
+    <div class="about-content">
+        <p>
+            Profissional em formação na área de Inteligência Artificial, com experiência em análise de dados, 
+            modelagem estatística e desenvolvimento de soluções baseadas em Machine Learning e NLP. Busco uma 
+            oportunidade como Cientista de Dados para aplicar técnicas avançadas de análise, modelagem preditiva e 
+            inteligência artificial na extração de insights estratégicos e na otimização de processos.
+        </p>
+        <p>
+            Tenho perfil analítico, foco em solução de problemas e experiência no desenvolvimento de soluções escaláveis 
+            alinhadas aos objetivos do negócio.
+        </p>
+    </div>
+    
+    <div class="highlight-cards">
+        <div class="card">
+            <div class="card-icon"><i class="fas fa-code"></i></div>
+            <h3>Desenvolvimento</h3>
+            <p>Python, SQL, R e tecnologias de análise de dados</p>
+        </div>
+        <div class="card">
+            <div class="card-icon"><i class="fas fa-brain"></i></div>
+            <h3>Machine Learning</h3>
+            <p>TensorFlow, Scikit-learn e algoritmos supervisionados e não supervisionados</p>
+        </div>
+        <div class="card">
+            <div class="card-icon"><i class="fas fa-comments"></i></div>
+            <h3>NLP</h3>
+            <p>Processamento de Linguagem Natural para análise de textos e extração de dados</p>
+        </div>
+    </div>
+</section>
+
+<section class="featured-projects">
+    <div class="section-header">
+        <h2>Projetos em Destaque</h2>
+        <div class="accent-line"></div>
+    </div>
+    
+    <div class="project-cards">
+        <div class="project-card">
+            <div class="project-header">
+                <h3>Saturn</h3>
+                <p class="project-subtitle">Banco de dados de ETFs com NLP</p>
+            </div>
+            <div class="project-body">
+                <p class="highlight">Vencedor do Challenge B3 - 1º Lugar, Next 2024</p>
+                <p>Desenvolvimento de solução para integração ao FundosNET com técnicas avançadas de busca e NLP para análise de documentos financeiros.</p>
+                <div class="project-tech">
+                    <span>ElasticSearch</span>
+                    <span>ChatGPT API</span>
+                    <span>Python</span>
+                    <span>Flask</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="project-card">
+            <div class="project-header">
+                <h3>Projeto S.A.L.V.A.</h3>
+                <p class="project-subtitle">Sistema de Reconhecimento</p>
+            </div>
+            <div class="project-body">
+                <p>Sistema de visão computacional para auxílio em resgates de vítimas de inundações usando redes neurais convolucionais para detecção de pessoas em áreas alagadas.</p>
+                <div class="project-tech">
+                    <span>Yolo V5</span>
+                    <span>Python</span>
+                    <span>OpenCV</span>
+                    <span>HTML</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="center">
+        <a href="{{ url_for('projects') }}" class="btn secondary">Ver Todos os Projetos</a>
+    </div>
+</section>
+{% endblock %}

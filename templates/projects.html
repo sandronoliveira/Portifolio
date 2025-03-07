@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Projetos | Sandron Oliveira Silva{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h2>Projetos</h2>
+    <div class="accent-line"></div>
+    <p>Confira os projetos que desenvolvi aplicando minhas habilidades em ciência de dados e inteligência artificial</p>
+</section>
+
+<section class="projects-grid">
+    {% for project in projects %}
+    <div class="project-item {% if project.in_progress %}in-progress{% endif %}">
+        {% if project.image %}
+        <div class="project-image">
+            <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ project.title }}">
+            {% if project.in_progress %}
+            <div class="project-status">Em Andamento</div>
+            {% endif %}
+        </div>
+        {% elif project.in_progress %}
+        <div class="project-status-banner">Em Andamento</div>
+        {% endif %}
+        <div class="project-content">
+            <h3>{{ project.title }}</h3>
+            {% if project.subtitle %}
+            <p class="project-subtitle">{{ project.subtitle }}</p>
+            {% endif %}
+            <div class="project-description">
+                {% for line in project.description.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
+            </div>
+            <div class="tech-tags">
+                {% for tech in project.technologies.split(', ') %}
+                <span class="tech-tag">{{ tech }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Nenhum projeto cadastrado no momento.</p>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

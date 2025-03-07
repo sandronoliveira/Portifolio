@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Projeto | Sandron Oliveira Silva{% endblock %}
+
+{% block content %}
+<section class="admin-header">
+    <h2>Editar Projeto</h2>
+    <div class="accent-line"></div>
+    <div class="admin-actions">
+        <a href="{{ url_for('admin') }}" class="btn secondary"><i class="fas fa-arrow-left"></i> Voltar ao Painel</a>
+    </div>
+</section>
+
+<section class="edit-form-container">
+    <form action="{{ url_for('edit_project', id=project.id) }}" method="post" enctype="multipart/form-data" class="admin-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="title">Título do Projeto</label>
+                <input type="text" id="title" name="title" value="{{ project.title }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subtitle">Subtítulo</label>
+                <input type="text" id="subtitle" name="subtitle" value="{{ project.subtitle or '' }}">
+            </div>
+        </div>
+        
+        <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="in_progress" name="in_progress" 
+                    {% if project.in_progress %}checked{% endif %}>
+                <span>Em Andamento</span>
+            </label>
+            <small>Marque esta opção se o projeto está em desenvolvimento</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea id="description" name="description" rows="5" required>{{ project.description }}</textarea>
+            <small>Use linhas separadas com marcadores (- item) para melhor formatação</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="technologies">Tecnologias Utilizadas</label>
+            <input type="text" id="technologies" name="technologies" value="{{ project.technologies }}" required>
+            <small>Separadas por vírgula (Ex: Python, Flask, TensorFlow)</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="project_image">Imagem do Projeto (opcional)</label>
+            
+            {% if project.image %}
+            <div class="current-image-preview">
+                <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ project.title }}">
+                <p>Envie uma nova imagem para substituir a atual</p>
+            </div>
+            {% endif %}
+            
+            <input type="file" id="project_image" name="project_image" accept="image/*">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn primary">Salvar Alterações</button>
+            <a href="{{ url_for('admin') }}" class="btn secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

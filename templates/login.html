@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Sandron Oliveira Silva{% endblock %}
+
+{% block content %}
+<section class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Área Administrativa</h2>
+            <p>Digite suas credenciais para acessar</p>
+        </div>
+        
+        <form class="login-form" method="post">
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn primary full-width">Entrar</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

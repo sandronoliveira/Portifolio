@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Certificado | Sandron Oliveira Silva{% endblock %}
+
+{% block content %}
+<section class="admin-header">
+    <h2>Editar Certificado</h2>
+    <div class="accent-line"></div>
+    <div class="admin-actions">
+        <a href="{{ url_for('admin') }}" class="btn secondary"><i class="fas fa-arrow-left"></i> Voltar ao Painel</a>
+    </div>
+</section>
+
+<section class="edit-form-container">
+    <form action="{{ url_for('edit_certificate', id=certificate.id) }}" method="post" enctype="multipart/form-data" class="admin-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="title">Título do Certificado</label>
+                <input type="text" id="title" name="title" value="{{ certificate.title }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="institution">Instituição</label>
+                <input type="text" id="institution" name="institution" value="{{ certificate.institution }}" required>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="date_completed">Data de Conclusão</label>
+                <input type="date" id="date_completed" name="date_completed" 
+                    value="{{ certificate.date_completed.strftime('%Y-%m-%d') if certificate.date_completed else '' }}">
+            </div>
+            
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="in_progress" name="in_progress" 
+                        {% if certificate.in_progress %}checked{% endif %}>
+                    <span>Em Andamento</span>
+                </label>
+                <small>Marque esta opção se o certificado está em curso</small>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Descrição (opcional)</label>
+            <textarea id="description" name="description" rows="3">{{ certificate.description or '' }}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="certificate_image">Imagem do Certificado (opcional)</label>
+            
+            {% if certificate.image %}
+            <div class="current-image-preview">
+                <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ certificate.title }}">
+                <p>Envie uma nova imagem para substituir a atual</p>
+            </div>
+            {% endif %}
+            
+            <input type="file" id="certificate_image" name="certificate_image" accept="image/*">
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn primary">Salvar Alterações</button>
+            <a href="{{ url_for('admin') }}" class="btn secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

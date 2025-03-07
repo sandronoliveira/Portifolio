@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Formação | Sandron Oliveira Silva{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h2>Formação Acadêmica</h2>
+    <div class="accent-line"></div>
+</section>
+
+<section class="education-timeline">
+    <div class="timeline-item">
+        <div class="timeline-marker">
+            <div class="marker-dot"></div>
+            <div class="marker-line"></div>
+        </div>
+        <div class="timeline-content">
+            <div class="education-card current">
+                <div class="education-header">
+                    <h3>Tecnólogo em Inteligência Artificial</h3>
+                    <span class="education-period">Cursando</span>
+                </div>
+                <div class="education-body">
+                    <p class="education-institution">FIAP</p>
+                    <p>GPA 4.0, Média 93/100</p>
+                    <p>Cursando no período noturno</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="certificates-section">
+    <div class="section-header">
+        <h2>Certificados e Cursos Complementares</h2>
+        <div class="accent-line"></div>
+    </div>
+    
+    <div class="certificates-grid">
+        {% for certificate in certificates %}
+        <div class="certificate-card {% if certificate.in_progress %}in-progress{% endif %}">
+            {% if certificate.image %}
+            <div class="certificate-image">
+                <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ certificate.title }}">
+                {% if certificate.in_progress %}
+                <div class="certificate-status-ribbon">Em Andamento</div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="certificate-icon">
+                <i class="fas fa-award"></i>
+                {% if certificate.in_progress %}
+                <div class="certificate-status-dot"></div>
+                {% endif %}
+            </div>
+            {% endif %}
+            <div class="certificate-info">
+                <h3>{{ certificate.title }}
+                    {% if certificate.in_progress %}
+                    <span class="status-badge">Em Andamento</span>
+                    {% endif %}
+                </h3>
+                <p class="certificate-institution">{{ certificate.institution }}</p>
+                {% if certificate.date_completed %}
+                <p class="certificate-date">{{ certificate.date_completed.strftime('%B %Y') }}</p>
+                {% endif %}
+                {% if certificate.description %}
+                <p class="certificate-description">{{ certificate.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>Nenhum certificado cadastrado no momento.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

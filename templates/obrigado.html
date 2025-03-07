@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Mensagem Enviada | Sandron Oliveira Silva{% endblock %}
+
+{% block content %}
+<section class="thank-you-container">
+    <div class="thank-you-card">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2>Mensagem enviada com sucesso!</h2>
+        <p>Obrigado por entrar em contato. Responderei sua mensagem o mais breve possível.</p>
+        <a href="{{ url_for('index') }}" class="btn primary">Voltar para o início</a>
+    </div>
+</section>
+{% endblock %}

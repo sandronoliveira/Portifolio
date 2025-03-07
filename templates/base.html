@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sandron Oliveira Silva | Portfolio{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-image">
+                    {% if user and user.profile_image %}
+                        <img src="{{ url_for('uploaded_file', filename='profile/' + user.profile_image) }}" alt="Sandron Oliveira Silva" class="profile-img">
+                    {% else %}
+                        <div class="avatar">SO</div>
+                    {% endif %}
+                </div>
+                <h1>Sandron Oliveira Silva</h1>
+                <p class="title">Especialista em IA | Cientista de Dados</p>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="{{ url_for('index') }}" {% if request.path == url_for('index') %}class="active"{% endif %}><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="{{ url_for('projects') }}" {% if request.path == url_for('projects') %}class="active"{% endif %}><i class="fas fa-project-diagram"></i> Projetos</a></li>
+                    <li><a href="{{ url_for('skills') }}" {% if request.path == url_for('skills') %}class="active"{% endif %}><i class="fas fa-brain"></i> Competências</a></li>
+                    <li><a href="{{ url_for('education') }}" {% if request.path == url_for('education') %}class="active"{% endif %}><i class="fas fa-graduation-cap"></i> Formação</a></li>
+                    <li><a href="{{ url_for('contact') }}" {% if request.path == url_for('contact') %}class="active"{% endif %}><i class="fas fa-envelope"></i> Contato</a></li>
+                </ul>
+            </nav>
+            
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/sandronoliveira/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:sandrono61@gmail.com"><i class="fas fa-envelope"></i></a>
+                <a href="tel:+5511913349334"><i class="fas fa-phone"></i></a>
+                <a href="{{ url_for('login') }}" title="Admin Login"><i class="fas fa-lock"></i></a>
+            </div>
+        </aside>
+        
+        <main class="content">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
