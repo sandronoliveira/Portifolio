@@ -3,26 +3,44 @@
 {% block title %}Login | Sandron Oliveira Silva{% endblock %}
 
 {% block content %}
-<section class="login-container">
-    <div class="login-card">
-        <div class="login-header">
-            <h2>Área Administrativa</h2>
-            <p>Digite suas credenciais para acessar</p>
+<div class="login-container">
+    <h2>Área Administrativa</h2>
+    <p>Digite suas credenciais para acessar</p>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <form class="login-form" method="post">
+        <div class="form-group">
+            <label for="username">Usuário</label>
+            <input type="text" id="username" name="username" required autofocus>
         </div>
         
-        <form class="login-form" method="post">
-            <div class="form-group">
-                <label for="username">Usuário</label>
-                <input type="text" id="username" name="username" required autofocus>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            
-            <button type="submit" class="btn primary full-width">Entrar</button>
-        </form>
-    </div>
-</section>
+        <div class="form-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <button type="submit">Entrar</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Adicionar classe ativa ao link atual no menu
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.main-nav a');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+    });
+</script>
 {% endblock %}

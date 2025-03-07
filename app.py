@@ -8,9 +8,17 @@ import uuid
 from datetime import datetime
 
 app = Flask(__name__)
+app.static_folder = 'static'
+app.static_url_path = '/static'
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Configurações de produção para Railway
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    app.config['PREFERRED_URL_SCHEME'] = 'https'
+    # Remova a linha abaixo se causar problemas
+    # app.config['SERVER_NAME'] = 'www.sandron.dev.br'
 
 # Configurações para upload de imagens
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
