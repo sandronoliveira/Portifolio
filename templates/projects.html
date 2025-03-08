@@ -1,413 +1,48 @@
 {% extends "base.html" %}
 
-{% block title %}Competências | Sandron Oliveira Silva{% endblock %}
+{% block title %}Projetos | Sandron Oliveira Silva{% endblock %}
 
 {% block content %}
-<!-- Header da página -->
-<section class="page-header-enhanced">
-    <h1 class="page-title">Competências Profissionais</h1>
+<section class="page-header">
+    <h2>Projetos</h2>
     <div class="accent-line"></div>
-    <p class="page-subtitle">Conjunto de habilidades técnicas e pessoais desenvolvidas ao longo da minha jornada</p>
+    <p>Confira os projetos que desenvolvi aplicando minhas habilidades em ciência de dados e inteligência artificial</p>
 </section>
 
-<!-- Visão geral de competências -->
-<section class="skills-overview">
-    <div class="skills-cards">
-        <div class="skill-overview-card">
-            <div class="skill-header">
-                <div class="skill-icon-container">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <h2>Machine Learning</h2>
-            </div>
-            <p>Experiência com algoritmos supervisionados e não-supervisionados para solucionar problemas complexos de negócio.</p>
-            <div class="expertise-level">
-                <div class="expertise-label">Nível de Expertise</div>
-                <div class="expertise-bars">
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar"></div>
-                </div>
-            </div>
+<section class="projects-grid">
+    {% for project in projects %}
+    <div class="project-item {% if project.in_progress %}in-progress{% endif %}">
+        {% if project.image %}
+        <div class="project-image">
+            <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ project.title }}">
+            {% if project.in_progress %}
+            <div class="project-status">Em Andamento</div>
+            {% endif %}
         </div>
-
-        <div class="skill-overview-card">
-            <div class="skill-header">
-                <div class="skill-icon-container">
-                    <i class="fas fa-code"></i>
-                </div>
-                <h2>Desenvolvimento</h2>
+        {% elif project.in_progress %}
+        <div class="project-status-banner">Em Andamento</div>
+        {% endif %}
+        <div class="project-content">
+            <h3>{{ project.title }}</h3>
+            {% if project.subtitle %}
+            <p class="project-subtitle">{{ project.subtitle }}</p>
+            {% endif %}
+            <div class="project-description">
+                {% for line in project.description.split('\n') %}
+                <p>{{ line }}</p>
+                {% endfor %}
             </div>
-            <p>Proficiência em linguagens de programação e ferramentas para implementação de soluções de dados.</p>
-            <div class="expertise-level">
-                <div class="expertise-label">Nível de Expertise</div>
-                <div class="expertise-bars">
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="skill-overview-card">
-            <div class="skill-header">
-                <div class="skill-icon-container">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h2>Análise de Dados</h2>
-            </div>
-            <p>Capacidade de transformar dados brutos em insights acionáveis para tomada de decisões estratégicas.</p>
-            <div class="expertise-level">
-                <div class="expertise-label">Nível de Expertise</div>
-                <div class="expertise-bars">
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar filled"></div>
-                    <div class="expertise-bar"></div>
-                </div>
+            <div class="tech-tags">
+                {% for tech in project.technologies.split(', ') %}
+                <span class="tech-tag">{{ tech }}</span>
+                {% endfor %}
             </div>
         </div>
     </div>
-</section>
-
-<!-- Seção de Linguagens e Ferramentas -->
-<section class="technical-skills">
-    <div class="section-header">
-        <h2>Linguagens de Programação & Ferramentas</h2>
-        <div class="accent-line"></div>
+    {% else %}
+    <div class="empty-state">
+        <p>Nenhum projeto cadastrado no momento.</p>
     </div>
-
-    <div class="skills-container">
-        <div class="skills-column">
-            <h3 class="skills-category-title">
-                <i class="fas fa-code"></i>
-                Linguagens de Programação
-            </h3>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>Python</h4>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar">
-                            <div class="skill-level" style="width: 95%"></div>
-                        </div>
-                        <span class="skill-percentage">95%</span>
-                    </div>
-                </div>
-                <div class="skill-details">
-                    <p>Desenvolvimento de soluções de ML, análise de dados e automação</p>
-                    <div class="skill-badges">
-                        <span class="badge">pandas</span>
-                        <span class="badge">scikit-learn</span>
-                        <span class="badge">TensorFlow</span>
-                        <span class="badge">NumPy</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>SQL</h4>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar">
-                            <div class="skill-level" style="width: 90%"></div>
-                        </div>
-                        <span class="skill-percentage">90%</span>
-                    </div>
-                </div>
-                <div class="skill-details">
-                    <p>Consultas complexas e manipulação de bancos de dados relacionais</p>
-                    <div class="skill-badges">
-                        <span class="badge">PostgreSQL</span>
-                        <span class="badge">MySQL</span>
-                        <span class="badge">SQLite</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>R</h4>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar">
-                            <div class="skill-level" style="width: 75%"></div>
-                        </div>
-                        <span class="skill-percentage">75%</span>
-                    </div>
-                </div>
-                <div class="skill-details">
-                    <p>Análise estatística e visualização de dados</p>
-                    <div class="skill-badges">
-                        <span class="badge">ggplot2</span>
-                        <span class="badge">dplyr</span>
-                        <span class="badge">tidyr</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="skills-column">
-            <h3 class="skills-category-title">
-                <i class="fas fa-tools"></i>
-                Ferramentas & Frameworks
-            </h3>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>TensorFlow</h4>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar">
-                            <div class="skill-level" style="width: 85%"></div>
-                        </div>
-                        <span class="skill-percentage">85%</span>
-                    </div>
-                </div>
-                <div class="skill-details">
-                    <p>Desenvolvimento e treinamento de modelos de deep learning</p>
-                    <div class="skill-badges">
-                        <span class="badge">Keras</span>
-                        <span class="badge">CNN</span>
-                        <span class="badge">RNN</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>PowerBI</h4>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar">
-                            <div class="skill-level" style="width: 80%"></div>
-                        </div>
-                        <span class="skill-percentage">80%</span>
-                    </div>
-                </div>
-                <div class="skill-details">
-                    <p>Criação de dashboards interativos e visualização de dados</p>
-                    <div class="skill-badges">
-                        <span class="badge">DAX</span>
-                        <span class="badge">Power Query</span>
-                        <span class="badge">Dataflows</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>Flask</h4>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar">
-                            <div class="skill-level" style="width: 85%"></div>
-                        </div>
-                        <span class="skill-percentage">85%</span>
-                    </div>
-                </div>
-                <div class="skill-details">
-                    <p>Desenvolvimento de APIs e aplicações web para modelos de ML</p>
-                    <div class="skill-badges">
-                        <span class="badge">REST API</span>
-                        <span class="badge">Jinja2</span>
-                        <span class="badge">SQLAlchemy</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Seção de Áreas de Especialização -->
-<section class="specialization-areas">
-    <div class="section-header">
-        <h2>Áreas de Especialização</h2>
-        <div class="accent-line"></div>
-    </div>
-    
-    <div class="specializations-grid">
-        <div class="specialization-card">
-            <div class="specialization-icon">
-                <i class="fas fa-brain"></i>
-            </div>
-            <h3>Machine Learning</h3>
-            <ul class="specialization-list">
-                <li>Algoritmos supervisionados e não-supervisionados</li>
-                <li>Modelos de classificação e regressão</li>
-                <li>Validação cruzada e otimização de hiperparâmetros</li>
-                <li>Implementação e deployment de modelos</li>
-            </ul>
-        </div>
-        
-        <div class="specialization-card">
-            <div class="specialization-icon">
-                <i class="fas fa-comments"></i>
-            </div>
-            <h3>Processamento de Linguagem Natural</h3>
-            <ul class="specialization-list">
-                <li>Análise de sentimento e classificação de texto</li>
-                <li>Vetorização e embeddings de texto</li>
-                <li>Transformers e modelos pré-treinados</li>
-                <li>Extração de informações e resumo automático</li>
-            </ul>
-        </div>
-        
-        <div class="specialization-card">
-            <div class="specialization-icon">
-                <i class="fas fa-database"></i>
-            </div>
-            <h3>Engenharia de Dados</h3>
-            <ul class="specialization-list">
-                <li>ETL e pipelines de dados</li>
-                <li>Construção e otimização de bancos de dados</li>
-                <li>Integração com APIs e fontes de dados externas</li>
-                <li>Soluções para big data e dados em tempo real</li>
-            </ul>
-        </div>
-        
-        <div class="specialization-card">
-            <div class="specialization-icon">
-                <i class="fas fa-chart-bar"></i>
-            </div>
-            <h3>Business Intelligence</h3>
-            <ul class="specialization-list">
-                <li>Dashboards interativos e visualização de dados</li>
-                <li>KPIs e métricas de negócio</li>
-                <li>Reporting automatizado</li>
-                <li>Análise exploratória e descritiva</li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<!-- Seção de Habilidades Interpessoais -->
-<section class="soft-skills-section">
-    <div class="section-header">
-        <h2>Habilidades Interpessoais</h2>
-        <div class="accent-line"></div>
-    </div>
-    
-    <div class="soft-skills-grid">
-        <div class="soft-skill-card">
-            <div class="soft-skill-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <div class="soft-skill-content">
-                <h3>Trabalho em Equipe</h3>
-                <p>Experiência em colaborar com equipes multidisciplinares e atuar em projetos que demandam comunicação clara e objetiva.</p>
-            </div>
-        </div>
-        
-        <div class="soft-skill-card">
-            <div class="soft-skill-icon">
-                <i class="fas fa-lightbulb"></i>
-            </div>
-            <div class="soft-skill-content">
-                <h3>Pensamento Crítico</h3>
-                <p>Habilidade para identificar desafios em dados complexos e propor soluções inovadoras baseadas em análises aprofundadas.</p>
-            </div>
-        </div>
-        
-        <div class="soft-skill-card">
-            <div class="soft-skill-icon">
-                <i class="fas fa-tasks"></i>
-            </div>
-            <div class="soft-skill-content">
-                <h3>Resolução de Problemas</h3>
-                <p>Abordagem analítica e estruturada para solucionar problemas complexos, com foco em soluções eficientes e escaláveis.</p>
-            </div>
-        </div>
-        
-        <div class="soft-skill-card">
-            <div class="soft-skill-icon">
-                <i class="fas fa-comments"></i>
-            </div>
-            <div class="soft-skill-content">
-                <h3>Comunicação</h3>
-                <p>Capacidade de traduzir conceitos técnicos complexos em linguagem acessível para stakeholders de diferentes áreas.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Seção de Idiomas -->
-<section class="languages-section">
-    <div class="section-header">
-        <h2>Idiomas</h2>
-        <div class="accent-line"></div>
-    </div>
-    
-    <div class="languages-container">
-        <div class="language-card">
-            <div class="language-info">
-                <img src="{{ url_for('static', filename='img/flag-brazil.svg') }}" alt="Bandeira do Brasil" class="language-flag">
-                <div class="language-details">
-                    <h3>Português</h3>
-                    <p>Nativo</p>
-                </div>
-            </div>
-            <div class="language-level">
-                <div class="language-bar">
-                    <div class="language-progress" style="width: 100%"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="language-card">
-            <div class="language-info">
-                <img src="{{ url_for('static', filename='img/flag-usa.svg') }}" alt="Bandeira dos EUA" class="language-flag">
-                <div class="language-details">
-                    <h3>Inglês</h3>
-                    <p>Avançado</p>
-                </div>
-            </div>
-            <div class="language-level">
-                <div class="language-bar">
-                    <div class="language-progress" style="width: 85%"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="language-card">
-            <div class="language-info">
-                <img src="{{ url_for('static', filename='img/flag-spain.svg') }}" alt="Bandeira da Espanha" class="language-flag">
-                <div class="language-details">
-                    <h3>Espanhol</h3>
-                    <p>Básico</p>
-                </div>
-            </div>
-            <div class="language-level">
-                <div class="language-bar">
-                    <div class="language-progress" style="width: 40%"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="language-card">
-            <div class="language-info">
-                <img src="{{ url_for('static', filename='img/flag-china.svg') }}" alt="Bandeira da China" class="language-flag">
-                <div class="language-details">
-                    <h3>Chinês</h3>
-                    <p>Básico</p>
-                </div>
-            </div>
-            <div class="language-level">
-                <div class="language-bar">
-                    <div class="language-progress" style="width: 30%"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA para projetos -->
-<section class="skills-cta">
-    <div class="cta-content">
-        <h2>Veja minhas habilidades em ação</h2>
-        <p>Confira meus projetos para ver como aplico essas competências em soluções reais.</p>
-        <a href="{{ url_for('projects') }}" class="btn primary">Ver Projetos</a>
-    </div>
+    {% endfor %}
 </section>
 {% endblock %}
