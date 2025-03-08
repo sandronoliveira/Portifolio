@@ -14,7 +14,7 @@
     <div class="project-item {% if project.in_progress %}in-progress{% endif %}">
         {% if project.image %}
         <div class="project-image">
-            <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ project.title }}">
+            <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ ml_field(project, 'title') }}">
             {% if project.in_progress %}
             <div class="project-status">{{ _('Em Andamento') }}</div>
             {% endif %}
@@ -23,12 +23,13 @@
         <div class="project-status-banner">{{ _('Em Andamento') }}</div>
         {% endif %}
         <div class="project-content">
-            <h3>{{ project.title }}</h3>
-            {% if project.subtitle %}
-            <p class="project-subtitle">{{ project.subtitle }}</p>
+            <h3>{{ ml_field(project, 'title') }}</h3>
+            {% if project.subtitle or project.subtitle_en %}
+            <p class="project-subtitle">{{ ml_field(project, 'subtitle') }}</p>
             {% endif %}
             <div class="project-description">
-                {% for line in project.description.split('\n') %}
+                {% set description = ml_field(project, 'description') %}
+                {% for line in description.split('\n') %}
                 <p>{{ line }}</p>
                 {% endfor %}
             </div>

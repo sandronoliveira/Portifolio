@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Painel Administrativo | Sandron Oliveira Silva{% endblock %}
+{% block title %}{{ _('Painel Administrativo') }} | Sandron Oliveira Silva{% endblock %}
 
 {% block content %}
 <section class="admin-header">
-    <h2>Painel Administrativo</h2>
+    <h2>{{ _('Painel Administrativo') }}</h2>
     <div class="accent-line"></div>
     <div class="admin-actions">
-        <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> {{ _('Sair') }}</a>
     </div>
 </section>
 
@@ -15,7 +15,7 @@
     {% if messages %}
         <div class="flash-messages">
             {% for message in messages %}
-                <div class="message">{{ message }}</div>
+                <div class="message">{{ _(message) }}</div>
             {% endfor %}
         </div>
     {% endif %}
@@ -23,31 +23,31 @@
 
 <section class="admin-tabs-container">
     <div class="admin-tabs-nav">
-        <a href="#profile-tab" class="active" data-tab="profile">Perfil</a>
-        <a href="#certificates-tab" data-tab="certificates">Certificados</a>
-        <a href="#projects-tab" data-tab="projects">Projetos</a>
+        <a href="#profile-tab" class="active" data-tab="profile">{{ _('Perfil') }}</a>
+        <a href="#certificates-tab" data-tab="certificates">{{ _('Certificados') }}</a>
+        <a href="#projects-tab" data-tab="projects">{{ _('Projetos') }}</a>
     </div>
     
     <div class="admin-content">
         <div class="tab-content active" id="profile-tab">
             <div class="admin-section">
-                <h3>Foto de Perfil</h3>
+                <h3>{{ _('Foto de Perfil') }}</h3>
                 <div class="profile-image-preview">
                     {% if user.profile_image %}
-                    <img src="{{ url_for('uploaded_file', filename='profile/' + user.profile_image) }}" alt="Foto de Perfil">
+                    <img src="{{ url_for('uploaded_file', filename='profile/' + user.profile_image) }}" alt="{{ _('Foto de Perfil') }}">
                     {% else %}
                     <div class="no-image">
                         <i class="fas fa-user"></i>
-                        <p>Nenhuma foto de perfil definida</p>
+                        <p>{{ _('Nenhuma foto de perfil definida') }}</p>
                     </div>
                     {% endif %}
                     
                     <form action="{{ url_for('upload_profile_image') }}" method="post" enctype="multipart/form-data" class="profile-image-form">
                         <div class="form-group">
-                            <label for="profile_image">Selecione uma nova foto</label>
+                            <label for="profile_image">{{ _('Selecione uma nova foto') }}</label>
                             <input type="file" id="profile_image" name="profile_image" accept="image/*" required>
                         </div>
-                        <button type="submit" class="btn primary">Atualizar Foto de Perfil</button>
+                        <button type="submit" class="btn primary">{{ _('Atualizar Foto de Perfil') }}</button>
                     </form>
                 </div>
             </div>
@@ -55,28 +55,67 @@
         
         <div class="tab-content" id="certificates-tab">
             <div class="admin-section">
-                <h3>Adicionar Novo Certificado</h3>
+                <h3>{{ _('Adicionar Novo Certificado') }}</h3>
+                
+                <div class="language-tabs">
+                    <a href="#add-cert-pt" class="language-tab active" data-lang="pt">{{ _('Português') }}</a>
+                    <a href="#add-cert-en" class="language-tab" data-lang="en">{{ _('Inglês') }}</a>
+                </div>
+                
                 <form action="{{ url_for('add_certificate') }}" method="post" enctype="multipart/form-data" class="admin-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="title">Título do Certificado</label>
-                            <input type="text" id="title" name="title" required>
+                    <!-- Conteúdo em Português -->
+                    <div id="add-cert-pt" class="language-content active">
+                        <h4>{{ _('Conteúdo em Português') }}</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="title">{{ _('Título do Certificado') }}</label>
+                                <input type="text" id="title" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="institution">{{ _('Instituição') }}</label>
+                                <input type="text" id="institution" name="institution" required>
+                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="institution">Instituição</label>
-                            <input type="text" id="institution" name="institution" required>
+                            <label for="description">{{ _('Descrição (opcional)') }}</label>
+                            <textarea id="description" name="description" rows="3"></textarea>
                         </div>
                     </div>
                     
+                    <!-- Conteúdo em Inglês -->
+                    <div id="add-cert-en" class="language-content">
+                        <h4>{{ _('Conteúdo em Inglês') }}</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="title_en">{{ _('Título do Certificado em Inglês') }}</label>
+                                <input type="text" id="title_en" name="title_en">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="institution_en">{{ _('Instituição em Inglês') }}</label>
+                                <input type="text" id="institution_en" name="institution_en">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description_en">{{ _('Descrição em Inglês (opcional)') }}</label>
+                            <textarea id="description_en" name="description_en" rows="3"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos comuns -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="date_completed">Data de Conclusão</label>
+                            <label for="date_completed">{{ _('Data de Conclusão') }}</label>
                             <input type="date" id="date_completed" name="date_completed">
                         </div>
                         
                         <div class="form-group">
-                            <label for="certificate_image">Imagem do Certificado (opcional)</label>
+                            <label for="certificate_image">{{ _('Imagem do Certificado (opcional)') }}</label>
                             <input type="file" id="certificate_image" name="certificate_image" accept="image/*">
                         </div>
                     </div>
@@ -84,122 +123,148 @@
                     <div class="form-group checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="in_progress" name="in_progress">
-                            <span>Em Andamento</span>
+                            <span>{{ _('Em Andamento') }}</span>
                         </label>
-                        <small>Marque esta opção se o certificado está em curso</small>
+                        <small>{{ _('Marque esta opção se o certificado está em curso') }}</small>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="description">Descrição (opcional)</label>
-                        <textarea id="description" name="description" rows="3"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn primary">Adicionar Certificado</button>
+                    <button type="submit" class="btn primary">{{ _('Adicionar Certificado') }}</button>
                 </form>
             </div>
             
             <div class="admin-section">
-                <h3>Certificados Existentes</h3>
-                <div class="admin-list">
-                    {% for certificate in certificates %}
-                    <div class="admin-item {% if certificate.in_progress %}in-progress{% endif %}">
-                        <div class="admin-item-info">
-                            <h4>{{ certificate.title }}
-                                {% if certificate.in_progress %}
-                                <span class="status-badge">Em Andamento</span>
-                                {% endif %}
-                            </h4>
-                            <p>{{ certificate.institution }}</p>
-                            {% if certificate.date_completed %}
-                            <p class="admin-item-date">{{ certificate.date_completed.strftime('%d/%m/%Y') }}</p>
-                            {% endif %}
-                            {% if certificate.image %}
-                            <div class="admin-item-image">
-                                <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ certificate.title }}">
-                                <form action="{{ url_for('update_certificate_image', id=certificate.id) }}" method="post" enctype="multipart/form-data" class="update-image-form">
-                                    <input type="file" name="certificate_image" accept="image/*" required>
-                                    <button type="submit" class="btn secondary small">Atualizar Imagem</button>
-                                </form>
-                            </div>
-                            {% else %}
-                            <div class="admin-item-image-upload">
-                                <form action="{{ url_for('update_certificate_image', id=certificate.id) }}" method="post" enctype="multipart/form-data" class="update-image-form">
-                                    <input type="file" name="certificate_image" accept="image/*" required>
-                                    <button type="submit" class="btn secondary small">Adicionar Imagem</button>
-                                </form>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <div class="admin-item-actions">
-                            <a href="{{ url_for('edit_certificate', id=certificate.id) }}" class="btn primary small"><i class="fas fa-edit"></i></a>
-                            <form action="{{ url_for('delete_certificate', id=certificate.id) }}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este certificado?');">
-                                <button type="submit" class="btn danger small"><i class="fas fa-trash"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="empty-state">
-                        <p>Nenhum certificado cadastrado.</p>
-                    </div>
-                    {% endfor %}
+                <h3>{{ _('Adicionar Novo Projeto') }}</h3>
+                
+                <div class="language-tabs">
+                    <a href="#add-project-pt" class="language-tab active" data-lang="pt">{{ _('Português') }}</a>
+                    <a href="#add-project-en" class="language-tab" data-lang="en">{{ _('Inglês') }}</a>
                 </div>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="projects-tab">
-            <div class="admin-section">
-                <h3>Adicionar Novo Projeto</h3>
+                
                 <form action="{{ url_for('add_project') }}" method="post" enctype="multipart/form-data" class="admin-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="project_title">Título do Projeto</label>
-                            <input type="text" id="project_title" name="title" required>
+                    <!-- Conteúdo em Português -->
+                    <div id="add-project-pt" class="language-content active">
+                        <h4>{{ _('Conteúdo em Português') }}</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="project_title">{{ _('Título do Projeto') }}</label>
+                                <input type="text" id="project_title" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subtitle">{{ _('Subtítulo') }}</label>
+                                <input type="text" id="subtitle" name="subtitle">
+                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="subtitle">Subtítulo</label>
-                            <input type="text" id="subtitle" name="subtitle">
+                            <label for="project_description">{{ _('Descrição') }}</label>
+                            <textarea id="project_description" name="description" rows="5" required></textarea>
+                            <small>{{ _('Use linhas separadas com marcadores (- item) para melhor formatação') }}</small>
                         </div>
                     </div>
                     
+                    <!-- Conteúdo em Inglês -->
+                    <div id="add-project-en" class="language-content">
+                        <h4>{{ _('Conteúdo em Inglês') }}</h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="project_title_en">{{ _('Título do Projeto em Inglês') }}</label>
+                                <input type="text" id="project_title_en" name="title_en">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subtitle_en">{{ _('Subtítulo em Inglês') }}</label>
+                                <input type="text" id="subtitle_en" name="subtitle_en">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="project_description_en">{{ _('Descrição em Inglês') }}</label>
+                            <textarea id="project_description_en" name="description_en" rows="5"></textarea>
+                            <small>{{ _('Use linhas separadas com marcadores (- item) para melhor formatação') }}</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos comuns -->
                     <div class="form-group">
-                        <label for="project_image">Imagem do Projeto (opcional)</label>
+                        <label for="project_image">{{ _('Imagem do Projeto (opcional)') }}</label>
                         <input type="file" id="project_image" name="project_image" accept="image/*">
                     </div>
                     
                     <div class="form-group checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="in_progress" name="in_progress">
-                            <span>Em Andamento</span>
+                            <span>{{ _('Em Andamento') }}</span>
                         </label>
-                        <small>Marque esta opção se o projeto está em desenvolvimento</small>
+                        <small>{{ _('Marque esta opção se o projeto está em desenvolvimento') }}</small>
                     </div>
                     
                     <div class="form-group">
-                        <label for="project_description">Descrição</label>
-                        <textarea id="project_description" name="description" rows="5" required></textarea>
-                        <small>Use linhas separadas com marcadores (- item) para melhor formatação</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="technologies">Tecnologias Utilizadas</label>
+                        <label for="technologies">{{ _('Tecnologias Utilizadas') }}</label>
                         <input type="text" id="technologies" name="technologies" required>
-                        <small>Separadas por vírgula (Ex: Python, Flask, TensorFlow)</small>
+                        <small>{{ _('Separadas por vírgula (Ex: Python, Flask, TensorFlow)') }}</small>
                     </div>
                     
-                    <button type="submit" class="btn primary">Adicionar Projeto</button>
+                    <button type="submit" class="btn primary">{{ _('Adicionar Projeto') }}</button>
+                </form>
+            </div>
+        
+        <div class="tab-content" id="projects-tab">
+            <div class="admin-section">
+                <h3>{{ _('Adicionar Novo Projeto') }}</h3>
+                <form action="{{ url_for('add_project') }}" method="post" enctype="multipart/form-data" class="admin-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project_title">{{ _('Título do Projeto') }}</label>
+                            <input type="text" id="project_title" name="title" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subtitle">{{ _('Subtítulo') }}</label>
+                            <input type="text" id="subtitle" name="subtitle">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project_image">{{ _('Imagem do Projeto (opcional)') }}</label>
+                        <input type="file" id="project_image" name="project_image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="in_progress" name="in_progress">
+                            <span>{{ _('Em Andamento') }}</span>
+                        </label>
+                        <small>{{ _('Marque esta opção se o projeto está em desenvolvimento') }}</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project_description">{{ _('Descrição') }}</label>
+                        <textarea id="project_description" name="description" rows="5" required></textarea>
+                        <small>{{ _('Use linhas separadas com marcadores (- item) para melhor formatação') }}</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="technologies">{{ _('Tecnologias Utilizadas') }}</label>
+                        <input type="text" id="technologies" name="technologies" required>
+                        <small>{{ _('Separadas por vírgula (Ex: Python, Flask, TensorFlow)') }}</small>
+                    </div>
+                    
+                    <button type="submit" class="btn primary">{{ _('Adicionar Projeto') }}</button>
                 </form>
             </div>
             
             <div class="admin-section">
-                <h3>Projetos Existentes</h3>
+                <h3>{{ _('Projetos Existentes') }}</h3>
                 <div class="admin-list">
                     {% for project in projects %}
                     <div class="admin-item {% if project.in_progress %}in-progress{% endif %}">
                         <div class="admin-item-info">
                             <h4>{{ project.title }}
                                 {% if project.in_progress %}
-                                <span class="status-badge">Em Andamento</span>
+                                <span class="status-badge">{{ _('Em Andamento') }}</span>
                                 {% endif %}
                             </h4>
                             {% if project.subtitle %}
@@ -211,28 +276,28 @@
                                 <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ project.title }}">
                                 <form action="{{ url_for('update_project_image', id=project.id) }}" method="post" enctype="multipart/form-data" class="update-image-form">
                                     <input type="file" name="project_image" accept="image/*" required>
-                                    <button type="submit" class="btn secondary small">Atualizar Imagem</button>
+                                    <button type="submit" class="btn secondary small">{{ _('Atualizar Imagem') }}</button>
                                 </form>
                             </div>
                             {% else %}
                             <div class="admin-item-image-upload">
                                 <form action="{{ url_for('update_project_image', id=project.id) }}" method="post" enctype="multipart/form-data" class="update-image-form">
                                     <input type="file" name="project_image" accept="image/*" required>
-                                    <button type="submit" class="btn secondary small">Adicionar Imagem</button>
+                                    <button type="submit" class="btn secondary small">{{ _('Adicionar Imagem') }}</button>
                                 </form>
                             </div>
                             {% endif %}
                         </div>
                         <div class="admin-item-actions">
                             <a href="{{ url_for('edit_project', id=project.id) }}" class="btn primary small"><i class="fas fa-edit"></i></a>
-                            <form action="{{ url_for('delete_project', id=project.id) }}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este projeto?');">
+                            <form action="{{ url_for('delete_project', id=project.id) }}" method="post" onsubmit="return confirm('{{ _('Tem certeza que deseja excluir este projeto?') }}');">
                                 <button type="submit" class="btn danger small"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>
                     </div>
                     {% else %}
                     <div class="empty-state">
-                        <p>Nenhum projeto cadastrado.</p>
+                        <p>{{ _('Nenhum projeto cadastrado.') }}</p>
                     </div>
                     {% endfor %}
                 </div>

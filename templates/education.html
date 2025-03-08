@@ -41,7 +41,7 @@
         <div class="certificate-card {% if certificate.in_progress %}in-progress{% endif %}">
             {% if certificate.image %}
             <div class="certificate-image">
-                <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ certificate.title }}">
+                <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ ml_field(certificate, 'title') }}">
                 {% if certificate.in_progress %}
                 <div class="certificate-status-ribbon">{{ _('Em Andamento') }}</div>
                 {% endif %}
@@ -55,17 +55,17 @@
             </div>
             {% endif %}
             <div class="certificate-info">
-                <h3>{{ certificate.title }}
+                <h3>{{ ml_field(certificate, 'title') }}
                     {% if certificate.in_progress %}
                     <span class="status-badge">{{ _('Em Andamento') }}</span>
                     {% endif %}
                 </h3>
-                <p class="certificate-institution">{{ certificate.institution }}</p>
+                <p class="certificate-institution">{{ ml_field(certificate, 'institution') }}</p>
                 {% if certificate.date_completed %}
                 <p class="certificate-date">{{ certificate.date_completed.strftime('%B %Y') }}</p>
                 {% endif %}
-                {% if certificate.description %}
-                <p class="certificate-description">{{ certificate.description }}</p>
+                {% if certificate.description or certificate.description_en %}
+                <p class="certificate-description">{{ ml_field(certificate, 'description') }}</p>
                 {% endif %}
             </div>
         </div>

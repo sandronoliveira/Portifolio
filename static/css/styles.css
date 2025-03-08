@@ -3504,3 +3504,89 @@ label {
     display: flex;
     justify-content: center;
 }
+/* Estilos para as abas de idioma nos formulários */
+.language-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(30, 58, 138, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.language-tab {
+    padding: 0.75rem 1.25rem;
+    color: var(--text-light);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: var(--transition);
+}
+
+.language-tab:hover {
+    color: var(--primary-color);
+}
+
+.language-tab.active {
+    color: var(--primary-color);
+}
+
+.language-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 3px 3px 0 0;
+}
+
+.language-content {
+    display: none;
+    animation: fadeContent 0.3s ease;
+}
+
+.language-content.active {
+    display: block;
+}
+
+.language-content h3, .language-content h4 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+
+@keyframes fadeContent {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Indicador visual de idioma atual */
+.lang-indicator {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+.lang-indicator:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.lang-indicator .lang-flag {
+    width: 16px;
+    height: 12px;
+    border-radius: 2px;
+}

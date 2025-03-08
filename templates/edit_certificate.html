@@ -1,33 +1,71 @@
 {% extends "base.html" %}
 
-{% block title %}Editar Certificado | Sandron Oliveira Silva{% endblock %}
+{% block title %}{{ _('Editar Certificado') }} | Sandron Oliveira Silva{% endblock %}
 
 {% block content %}
 <section class="admin-header">
-    <h2>Editar Certificado</h2>
+    <h2>{{ _('Editar Certificado') }}</h2>
     <div class="accent-line"></div>
     <div class="admin-actions">
-        <a href="{{ url_for('admin') }}" class="btn secondary"><i class="fas fa-arrow-left"></i> Voltar ao Painel</a>
+        <a href="{{ url_for('admin') }}" class="btn secondary"><i class="fas fa-arrow-left"></i> {{ _('Voltar ao Painel') }}</a>
     </div>
 </section>
 
 <section class="edit-form-container">
+    <div class="language-tabs">
+        <a href="#pt-content" class="language-tab active" data-lang="pt">{{ _('Português') }}</a>
+        <a href="#en-content" class="language-tab" data-lang="en">{{ _('Inglês') }}</a>
+    </div>
+
     <form action="{{ url_for('edit_certificate', id=certificate.id) }}" method="post" enctype="multipart/form-data" class="admin-form">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="title">Título do Certificado</label>
-                <input type="text" id="title" name="title" value="{{ certificate.title }}" required>
+        <!-- Conteúdo em Português -->
+        <div id="pt-content" class="language-content active">
+            <h3>{{ _('Conteúdo em Português') }}</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="title">{{ _('Título do Certificado') }}</label>
+                    <input type="text" id="title" name="title" value="{{ certificate.title }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="institution">{{ _('Instituição') }}</label>
+                    <input type="text" id="institution" name="institution" value="{{ certificate.institution }}" required>
+                </div>
             </div>
             
             <div class="form-group">
-                <label for="institution">Instituição</label>
-                <input type="text" id="institution" name="institution" value="{{ certificate.institution }}" required>
+                <label for="description">{{ _('Descrição (opcional)') }}</label>
+                <textarea id="description" name="description" rows="3">{{ certificate.description or '' }}</textarea>
             </div>
         </div>
         
+        <!-- Conteúdo em Inglês -->
+        <div id="en-content" class="language-content">
+            <h3>{{ _('Conteúdo em Inglês') }}</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="title_en">{{ _('Título do Certificado em Inglês') }}</label>
+                    <input type="text" id="title_en" name="title_en" value="{{ certificate.title_en or '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="institution_en">{{ _('Instituição em Inglês') }}</label>
+                    <input type="text" id="institution_en" name="institution_en" value="{{ certificate.institution_en or '' }}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="description_en">{{ _('Descrição em Inglês (opcional)') }}</label>
+                <textarea id="description_en" name="description_en" rows="3">{{ certificate.description_en or '' }}</textarea>
+            </div>
+        </div>
+        
+        <!-- Campos comuns -->
         <div class="form-row">
             <div class="form-group">
-                <label for="date_completed">Data de Conclusão</label>
+                <label for="date_completed">{{ _('Data de Conclusão') }}</label>
                 <input type="date" id="date_completed" name="date_completed" 
                     value="{{ certificate.date_completed.strftime('%Y-%m-%d') if certificate.date_completed else '' }}">
             </div>
@@ -36,24 +74,19 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="in_progress" name="in_progress" 
                         {% if certificate.in_progress %}checked{% endif %}>
-                    <span>Em Andamento</span>
+                    <span>{{ _('Em Andamento') }}</span>
                 </label>
-                <small>Marque esta opção se o certificado está em curso</small>
+                <small>{{ _('Marque esta opção se o certificado está em curso') }}</small>
             </div>
         </div>
         
         <div class="form-group">
-            <label for="description">Descrição (opcional)</label>
-            <textarea id="description" name="description" rows="3">{{ certificate.description or '' }}</textarea>
-        </div>
-        
-        <div class="form-group">
-            <label for="certificate_image">Imagem do Certificado (opcional)</label>
+            <label for="certificate_image">{{ _('Imagem do Certificado (opcional)') }}</label>
             
             {% if certificate.image %}
             <div class="current-image-preview">
                 <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ certificate.title }}">
-                <p>Envie uma nova imagem para substituir a atual</p>
+                <p>{{ _('Envie uma nova imagem para substituir a atual') }}</p>
             </div>
             {% endif %}
             
@@ -61,9 +94,36 @@
         </div>
         
         <div class="form-actions">
-            <button type="submit" class="btn primary">Salvar Alterações</button>
-            <a href="{{ url_for('admin') }}" class="btn secondary">Cancelar</a>
+            <button type="submit" class="btn primary">{{ _('Salvar Alterações') }}</button>
+            <a href="{{ url_for('admin') }}" class="btn secondary">{{ _('Cancelar') }}</a>
         </div>
     </form>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tabs de idioma
+        const langTabs = document.querySelectorAll('.language-tab');
+        const langContents = document.querySelectorAll('.language-content');
+        
+        langTabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remover classe ativa
+                langTabs.forEach(t => t.classList.remove('active'));
+                langContents.forEach(c => c.classList.remove('active'));
+                
+                // Adicionar classe ativa
+                this.classList.add('active');
+                
+                // Mostrar conteúdo
+                const lang = this.getAttribute('data-lang');
+                document.getElementById(`${lang}-content`).classList.add('active');
+            });
+        });
+    });
+</script>
 {% endblock %}
