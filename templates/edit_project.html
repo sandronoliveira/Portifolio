@@ -85,7 +85,7 @@
             
             {% if project.image %}
             <div class="current-image-preview">
-                <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ project.title }}">
+                <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ ml_field(project, 'title') }}">
                 <p>{{ _('Envie uma nova imagem para substituir a atual') }}</p>
             </div>
             {% endif %}

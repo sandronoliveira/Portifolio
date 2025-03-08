@@ -85,10 +85,13 @@ translations = {
         'Certificados': 'Certificates',
         'Adicionar Novo Certificado': 'Add New Certificate',
         'Título do Certificado': 'Certificate Title',
+        'Título do Certificado em Inglês': 'Certificate Title in English',
         'Instituição': 'Institution',
+        'Instituição em Inglês': 'Institution in English',
         'Data de Conclusão': 'Completion Date',
         'Marque esta opção se o certificado está em curso': 'Check this option if the certificate is in progress',
         'Descrição (opcional)': 'Description (optional)',
+        'Descrição em Inglês (opcional)': 'Description in English (optional)',
         'Imagem do Certificado (opcional)': 'Certificate Image (optional)',
         'Adicionar Certificado': 'Add Certificate',
         'Certificados Existentes': 'Existing Certificates',
@@ -98,13 +101,18 @@ translations = {
         'Tem certeza que deseja excluir este certificado?': 'Are you sure you want to delete this certificate?',
         'Editar Certificado': 'Edit Certificate',
         'Envie uma nova imagem para substituir a atual': 'Upload a new image to replace the current one',
+        'Conteúdo em Português': 'Content in Portuguese',
+        'Conteúdo em Inglês': 'Content in English',
         
         # Área administrativa - Projetos
         'Adicionar Novo Projeto': 'Add New Project',
         'Título do Projeto': 'Project Title',
+        'Título do Projeto em Inglês': 'Project Title in English',
         'Subtítulo': 'Subtitle',
+        'Subtítulo em Inglês': 'Subtitle in English',
         'Marque esta opção se o projeto está em desenvolvimento': 'Check this option if the project is in development',
         'Descrição': 'Description',
+        'Descrição em Inglês': 'Description in English',
         'Use linhas separadas com marcadores (- item) para melhor formatação': 'Use separate lines with markers (- item) for better formatting',
         'Tecnologias Utilizadas': 'Technologies Used',
         'Separadas por vírgula (Ex: Python, Flask, TensorFlow)': 'Separated by comma (E.g.: Python, Flask, TensorFlow)',
@@ -209,11 +217,15 @@ translations = {
         'Vencedor do Challenge B3 - 1º Lugar, Next 2024': 'Winner of B3 Challenge - 1st Place, Next 2024',
         'Especialidades': 'Specialties',
         'Análise de dados, modelagem preditiva e NLP': 'Data analysis, predictive modeling, and NLP',
-        'Tecnólogo em Inteligência Artificial - FIAP': 'Technologist in Artificial Intelligence - FIAP'
+        'Tecnólogo em Inteligência Artificial - FIAP': 'Technologist in Artificial Intelligence - FIAP',
+        'Certificado adicionado com sucesso!': 'Certificate added successfully!',
+        'Certificado atualizado com sucesso!': 'Certificate updated successfully!',
+        'Projeto adicionado com sucesso!': 'Project added successfully!',
+        'Projeto atualizado com sucesso!': 'Project updated successfully!'
     }
-}
+};
 
-# Adicione estas funções antes da definição das rotas
+# Funções de suporte ao multilinguismo
 
 def get_locale():
     """Obtém o idioma da sessão ou o padrão."""
@@ -408,7 +420,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page or url_for('admin'))
         else:
-            flash('Nome de usuário ou senha inválidos')
+            flash(_('Nome de usuário ou senha inválidos'))
     
     user = User.query.first()
     return render_template('login.html', user=user)
@@ -430,13 +442,13 @@ def admin():
 @login_required
 def upload_profile_image():
     if 'profile_image' not in request.files:
-        flash('Nenhum arquivo enviado')
+        flash(_('Nenhum arquivo enviado'))
         return redirect(url_for('admin'))
         
     file = request.files['profile_image']
     
     if file.filename == '':
-        flash('Nenhum arquivo selecionado')
+        flash(_('Nenhum arquivo selecionado'))
         return redirect(url_for('admin'))
         
     if file and allowed_file(file.filename):
@@ -457,95 +469,17 @@ def upload_profile_image():
         user.profile_image = unique_filename
         db.session.commit()
         
-        flash('Imagem de perfil atualizada com sucesso!')
+        flash(_('Imagem de perfil atualizada com sucesso!'))
     else:
-        flash('Tipo de arquivo não permitido')
+        flash(_('Tipo de arquivo não permitido'))
         
     return redirect(url_for('admin'))
 
-# Função para adicionar projeto
-@app.route('/admin/add_project', methods=['POST'])
-@login_required
-def add_project():
-    title = request.form.get('title')
-    title_en = request.form.get('title_en')
-    subtitle = request.form.get('subtitle')
-    subtitle_en = request.form.get('subtitle_en')
-    description = request.form.get('description')
-    description_en = request.form.get('description_en')
-    technologies = request.form.get('technologies')
-    in_progress = True if request.form.get('in_progress') else False
-    
-    new_project = Project(
-        title=title,
-        title_en=title_en,
-        subtitle=subtitle,
-        subtitle_en=subtitle_en,
-        description=description,
-        description_en=description_en,
-        technologies=technologies,
-        in_progress=in_progress
-    )
-    
-    # Processar imagem se enviada
-    if 'project_image' in request.files:
-        file = request.files['project_image']
-        if file and file.filename != '' and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            unique_filename = generate_unique_filename(filename)
-            file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
-            file.save(file_path)
-            new_project.image = unique_filename
-    
-    db.session.add(new_project)
-    db.session.commit()
-    
-    flash(_('Projeto adicionado com sucesso!'))
-    return redirect(url_for('admin'))
-
-# Função para editar projeto
-@app.route('/admin/edit_project/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_project(id):
-    project = Project.query.get_or_404(id)
-    
-    if request.method == 'POST':
-        project.title = request.form.get('title')
-        project.title_en = request.form.get('title_en')
-        project.subtitle = request.form.get('subtitle')
-        project.subtitle_en = request.form.get('subtitle_en')
-        project.description = request.form.get('description')
-        project.description_en = request.form.get('description_en')
-        project.technologies = request.form.get('technologies')
-        project.in_progress = True if request.form.get('in_progress') else False
-        
-        # Processar imagem se enviada
-        if 'project_image' in request.files:
-            file = request.files['project_image']
-            if file and file.filename != '' and allowed_file(file.filename):
-                # Excluir imagem antiga se existir
-                if project.image:
-                    old_image_path = os.path.join(app.config['PROJECT_IMGS'], project.image)
-                    if os.path.exists(old_image_path):
-                        os.remove(old_image_path)
-                
-                # Salvar nova imagem
-                filename = secure_filename(file.filename)
-                unique_filename = generate_unique_filename(filename)
-                file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
-                file.save(file_path)
-                project.image = unique_filename
-        
-        db.session.commit()
-        flash(_('Projeto atualizado com sucesso!'))
-        return redirect(url_for('admin'))
-    
-    return render_template('edit_project.html', project=project, user=current_user)
-
-# Função para adicionar certificado
+# Função para adicionar certificado (CRUD - C)
 @app.route('/admin/add_certificate', methods=['POST'])
 @login_required
 def add_certificate():
+    # Obter dados do formulário
     title = request.form.get('title')
     title_en = request.form.get('title_en')
     institution = request.form.get('institution')
@@ -555,6 +489,7 @@ def add_certificate():
     description_en = request.form.get('description_en')
     in_progress = True if request.form.get('in_progress') else False
     
+    # Criar novo certificado com suporte bilíngue
     new_certificate = Certificate(
         title=title,
         title_en=title_en,
@@ -576,19 +511,21 @@ def add_certificate():
             file.save(file_path)
             new_certificate.image = unique_filename
     
+    # Salvar no banco de dados
     db.session.add(new_certificate)
     db.session.commit()
     
     flash(_('Certificado adicionado com sucesso!'))
     return redirect(url_for('admin'))
 
-# Função para editar certificado
+# Função para editar certificado (CRUD - U)
 @app.route('/admin/edit_certificate/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_certificate(id):
     certificate = Certificate.query.get_or_404(id)
     
     if request.method == 'POST':
+        # Atualizar campos em português e inglês
         certificate.title = request.form.get('title')
         certificate.title_en = request.form.get('title_en')
         certificate.institution = request.form.get('institution')
@@ -615,48 +552,15 @@ def edit_certificate(id):
                 file.save(file_path)
                 certificate.image = unique_filename
         
+        # Salvar alterações
         db.session.commit()
         flash(_('Certificado atualizado com sucesso!'))
         return redirect(url_for('admin'))
     
+    # Renderizar formulário de edição
     return render_template('edit_certificate.html', certificate=certificate, user=current_user)
 
-@app.route('/admin/edit_certificate/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_certificate(id):
-    certificate = Certificate.query.get_or_404(id)
-    
-    if request.method == 'POST':
-        certificate.title = request.form.get('title')
-        certificate.institution = request.form.get('institution')
-        certificate.date_completed = datetime.strptime(request.form.get('date_completed'), '%Y-%m-%d') if request.form.get('date_completed') else None
-        certificate.description = request.form.get('description')
-        certificate.in_progress = True if request.form.get('in_progress') else False
-        
-        # Processar imagem se enviada
-        if 'certificate_image' in request.files:
-            file = request.files['certificate_image']
-            if file and file.filename != '' and allowed_file(file.filename):
-                # Excluir imagem antiga se existir
-                if certificate.image:
-                    old_image_path = os.path.join(app.config['CERTIFICATE_IMGS'], certificate.image)
-                    if os.path.exists(old_image_path):
-                        os.remove(old_image_path)
-                
-                # Salvar nova imagem
-                filename = secure_filename(file.filename)
-                unique_filename = generate_unique_filename(filename)
-                file_path = os.path.join(app.config['CERTIFICATE_IMGS'], unique_filename)
-                file.save(file_path)
-                certificate.image = unique_filename
-        
-        db.session.commit()
-        flash('Certificado atualizado com sucesso!')
-        return redirect(url_for('admin'))
-    
-    return render_template('edit_certificate.html', certificate=certificate, user=current_user)
-
-
+# Função para excluir certificado (CRUD - D)
 @app.route('/admin/delete_certificate/<int:id>', methods=['POST'])
 @login_required
 def delete_certificate(id):
@@ -668,25 +572,35 @@ def delete_certificate(id):
         if os.path.exists(image_path):
             os.remove(image_path)
     
+    # Excluir do banco de dados
     db.session.delete(certificate)
     db.session.commit()
     
-    flash('Certificado excluído com sucesso!')
+    flash(_('Certificado excluído com sucesso!'))
     return redirect(url_for('admin'))
 
+# Função para adicionar projeto (CRUD - C)
 @app.route('/admin/add_project', methods=['POST'])
 @login_required
 def add_project():
+    # Obter dados do formulário
     title = request.form.get('title')
+    title_en = request.form.get('title_en')
     subtitle = request.form.get('subtitle')
+    subtitle_en = request.form.get('subtitle_en')
     description = request.form.get('description')
+    description_en = request.form.get('description_en')
     technologies = request.form.get('technologies')
     in_progress = True if request.form.get('in_progress') else False
     
+    # Criar novo projeto com suporte bilíngue
     new_project = Project(
         title=title,
+        title_en=title_en,
         subtitle=subtitle,
+        subtitle_en=subtitle_en,
         description=description,
+        description_en=description_en,
         technologies=technologies,
         in_progress=in_progress
     )
@@ -701,21 +615,27 @@ def add_project():
             file.save(file_path)
             new_project.image = unique_filename
     
+    # Salvar no banco de dados
     db.session.add(new_project)
     db.session.commit()
     
-    flash('Projeto adicionado com sucesso!')
+    flash(_('Projeto adicionado com sucesso!'))
     return redirect(url_for('admin'))
 
+# Função para editar projeto (CRUD - U)
 @app.route('/admin/edit_project/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_project(id):
     project = Project.query.get_or_404(id)
     
     if request.method == 'POST':
+        # Atualizar campos em português e inglês
         project.title = request.form.get('title')
+        project.title_en = request.form.get('title_en')
         project.subtitle = request.form.get('subtitle')
+        project.subtitle_en = request.form.get('subtitle_en')
         project.description = request.form.get('description')
+        project.description_en = request.form.get('description_en')
         project.technologies = request.form.get('technologies')
         project.in_progress = True if request.form.get('in_progress') else False
         
@@ -736,12 +656,15 @@ def edit_project(id):
                 file.save(file_path)
                 project.image = unique_filename
         
+        # Salvar alterações
         db.session.commit()
-        flash('Projeto atualizado com sucesso!')
+        flash(_('Projeto atualizado com sucesso!'))
         return redirect(url_for('admin'))
     
+    # Renderizar formulário de edição
     return render_template('edit_project.html', project=project, user=current_user)
 
+# Função para excluir projeto (CRUD - D)
 @app.route('/admin/delete_project/<int:id>', methods=['POST'])
 @login_required
 def delete_project(id):
@@ -753,10 +676,11 @@ def delete_project(id):
         if os.path.exists(image_path):
             os.remove(image_path)
     
+    # Excluir do banco de dados
     db.session.delete(project)
     db.session.commit()
     
-    flash('Projeto excluído com sucesso!')
+    flash(_('Projeto excluído com sucesso!'))
     return redirect(url_for('admin'))
 
 @app.route('/admin/update_certificate_image/<int:id>', methods=['POST'])
@@ -765,13 +689,13 @@ def update_certificate_image(id):
     certificate = Certificate.query.get_or_404(id)
     
     if 'certificate_image' not in request.files:
-        flash('Nenhum arquivo enviado')
+        flash(_('Nenhum arquivo enviado'))
         return redirect(url_for('admin'))
         
     file = request.files['certificate_image']
     
     if file.filename == '':
-        flash('Nenhum arquivo selecionado')
+        flash(_('Nenhum arquivo selecionado'))
         return redirect(url_for('admin'))
         
     if file and allowed_file(file.filename):
@@ -791,9 +715,9 @@ def update_certificate_image(id):
         certificate.image = unique_filename
         db.session.commit()
         
-        flash('Imagem do certificado atualizada com sucesso!')
+        flash(_('Imagem do certificado atualizada com sucesso!'))
     else:
-        flash('Tipo de arquivo não permitido')
+        flash(_('Tipo de arquivo não permitido'))
         
     return redirect(url_for('admin'))
 
@@ -803,13 +727,13 @@ def update_project_image(id):
     project = Project.query.get_or_404(id)
     
     if 'project_image' not in request.files:
-        flash('Nenhum arquivo enviado')
+        flash(_('Nenhum arquivo enviado'))
         return redirect(url_for('admin'))
         
     file = request.files['project_image']
     
     if file.filename == '':
-        flash('Nenhum arquivo selecionado')
+        flash(_('Nenhum arquivo selecionado'))
         return redirect(url_for('admin'))
         
     if file and allowed_file(file.filename):
@@ -829,9 +753,9 @@ def update_project_image(id):
         project.image = unique_filename
         db.session.commit()
         
-        flash('Imagem do projeto atualizada com sucesso!')
+        flash(_('Imagem do projeto atualizada com sucesso!'))
     else:
-        flash('Tipo de arquivo não permitido')
+        flash(_('Tipo de arquivo não permitido'))
         
     return redirect(url_for('admin'))
 
@@ -877,26 +801,6 @@ def migrate_bilingual_columns():
             
         print("Migração para colunas bilíngues concluída!")
 
-# Atualizar a função initialize_db para incluir a nova migração
-def initialize_db():
-    with app.app_context():
-        # Criar as tabelas
-        db.create_all()
-        
-        # Executar migrações para adicionar novas colunas se necessário
-        migrate_database()
-        migrate_bilingual_columns()  # Nova migração para colunas bilíngues
-        
-        # Verificar se o usuário admin já existe
-        admin_exists = User.query.filter_by(username='admin').first() is not None
-        
-        # Apenas adicionar dados iniciais se o admin não existir
-        if not admin_exists:
-            # Código existente para inicialização...
-            pass
-
-
-
 def migrate_database():
     """Adiciona novas colunas às tabelas existentes."""
     with app.app_context():
@@ -920,8 +824,6 @@ def migrate_database():
         
         print("Migração do banco de dados concluída!")
 
-
-
 def initialize_db():
     with app.app_context():
         # Criar as tabelas
@@ -929,6 +831,7 @@ def initialize_db():
         
         # Executar migrações para adicionar novas colunas se necessário
         migrate_database()
+        migrate_bilingual_columns()  # Nova migração para colunas bilíngues
         
         # Verificar se o usuário admin já existe
         admin_exists = User.query.filter_by(username='admin').first() is not None
@@ -994,18 +897,9 @@ def initialize_db():
         else:
             print("Usuário admin já existe. Pulando inicialização de dados.")
 
-
 @app.route('/obrigado')
 def obrigado():
     return render_template('obrigado.html', user=User.query.first())
-
-@app.context_processor
-def utility_processor():
-    """Adiciona funções utilitárias aos templates."""
-    return {
-        '_': _,
-        'get_locale': get_locale
-    }
 
 if __name__ == '__main__':
     initialize_db()

@@ -23,12 +23,13 @@
 
 <section class="admin-tabs-container">
     <div class="admin-tabs-nav">
-        <a href="#profile-tab" class="active" data-tab="profile">{{ _('Perfil') }}</a>
-        <a href="#certificates-tab" data-tab="certificates">{{ _('Certificados') }}</a>
-        <a href="#projects-tab" data-tab="projects">{{ _('Projetos') }}</a>
+        <a href="#profile-tab" class="admin-tab active" data-tab="profile">{{ _('Perfil') }}</a>
+        <a href="#certificates-tab" class="admin-tab" data-tab="certificates">{{ _('Certificados') }}</a>
+        <a href="#projects-tab" class="admin-tab" data-tab="projects">{{ _('Projetos') }}</a>
     </div>
     
     <div class="admin-content">
+        <!-- Aba de Perfil -->
         <div class="tab-content active" id="profile-tab">
             <div class="admin-section">
                 <h3>{{ _('Foto de Perfil') }}</h3>
@@ -53,6 +54,7 @@
             </div>
         </div>
         
+        <!-- Aba de Certificados -->
         <div class="tab-content" id="certificates-tab">
             <div class="admin-section">
                 <h3>{{ _('Adicionar Novo Certificado') }}</h3>
@@ -133,6 +135,56 @@
             </div>
             
             <div class="admin-section">
+                <h3>{{ _('Certificados Existentes') }}</h3>
+                <div class="admin-list">
+                    {% for certificate in certificates %}
+                    <div class="admin-item {% if certificate.in_progress %}in-progress{% endif %}">
+                        <div class="admin-item-info">
+                            <h4>{{ certificate.title }}
+                                {% if certificate.in_progress %}
+                                <span class="status-badge">{{ _('Em Andamento') }}</span>
+                                {% endif %}
+                            </h4>
+                            <p class="admin-item-date">{{ certificate.institution }}</p>
+                            {% if certificate.date_completed %}
+                            <p class="admin-item-date">{{ certificate.date_completed.strftime('%d/%m/%Y') }}</p>
+                            {% endif %}
+                            {% if certificate.image %}
+                            <div class="admin-item-image">
+                                <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ certificate.title }}">
+                                <form action="{{ url_for('update_certificate_image', id=certificate.id) }}" method="post" enctype="multipart/form-data" class="update-image-form">
+                                    <input type="file" name="certificate_image" accept="image/*" required>
+                                    <button type="submit" class="btn secondary small">{{ _('Atualizar Imagem') }}</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <div class="admin-item-image-upload">
+                                <form action="{{ url_for('update_certificate_image', id=certificate.id) }}" method="post" enctype="multipart/form-data" class="update-image-form">
+                                    <input type="file" name="certificate_image" accept="image/*" required>
+                                    <button type="submit" class="btn secondary small">{{ _('Adicionar Imagem') }}</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="admin-item-actions">
+                            <a href="{{ url_for('edit_certificate', id=certificate.id) }}" class="btn primary small"><i class="fas fa-edit"></i></a>
+                            <form action="{{ url_for('delete_certificate', id=certificate.id) }}" method="post" onsubmit="return confirm('{{ _('Tem certeza que deseja excluir este certificado?') }}');">
+                                <button type="submit" class="btn danger small"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <p>{{ _('Nenhum certificado cadastrado.') }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Aba de Projetos -->
+        <div class="tab-content" id="projects-tab">
+            <div class="admin-section">
                 <h3>{{ _('Adicionar Novo Projeto') }}</h3>
                 
                 <div class="language-tabs">
@@ -210,51 +262,6 @@
                     <button type="submit" class="btn primary">{{ _('Adicionar Projeto') }}</button>
                 </form>
             </div>
-        
-        <div class="tab-content" id="projects-tab">
-            <div class="admin-section">
-                <h3>{{ _('Adicionar Novo Projeto') }}</h3>
-                <form action="{{ url_for('add_project') }}" method="post" enctype="multipart/form-data" class="admin-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="project_title">{{ _('Título do Projeto') }}</label>
-                            <input type="text" id="project_title" name="title" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="subtitle">{{ _('Subtítulo') }}</label>
-                            <input type="text" id="subtitle" name="subtitle">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="project_image">{{ _('Imagem do Projeto (opcional)') }}</label>
-                        <input type="file" id="project_image" name="project_image" accept="image/*">
-                    </div>
-                    
-                    <div class="form-group checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="in_progress" name="in_progress">
-                            <span>{{ _('Em Andamento') }}</span>
-                        </label>
-                        <small>{{ _('Marque esta opção se o projeto está em desenvolvimento') }}</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="project_description">{{ _('Descrição') }}</label>
-                        <textarea id="project_description" name="description" rows="5" required></textarea>
-                        <small>{{ _('Use linhas separadas com marcadores (- item) para melhor formatação') }}</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="technologies">{{ _('Tecnologias Utilizadas') }}</label>
-                        <input type="text" id="technologies" name="technologies" required>
-                        <small>{{ _('Separadas por vírgula (Ex: Python, Flask, TensorFlow)') }}</small>
-                    </div>
-                    
-                    <button type="submit" class="btn primary">{{ _('Adicionar Projeto') }}</button>
-                </form>
-            </div>
             
             <div class="admin-section">
                 <h3>{{ _('Projetos Existentes') }}</h3>
@@ -310,7 +317,7 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Tab switching logic
+        // Tab switching logic (principal do admin)
         const tabLinks = document.querySelectorAll('.admin-tabs-nav a');
         const tabContents = document.querySelectorAll('.tab-content');
         
@@ -328,6 +335,34 @@
                 // Get tab ID and show corresponding content
                 const tabId = link.getAttribute('data-tab');
                 document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Language tabs for forms
+        const langTabs = document.querySelectorAll('.language-tab');
+        const langContents = document.querySelectorAll('.language-content');
+        
+        langTabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Find siblings that are .language-tab
+                const siblingTabs = Array.from(this.parentNode.children).filter(el => el.classList.contains('language-tab'));
+                
+                // Find related language-content elements
+                const formId = this.getAttribute('href').split('#')[1].split('-')[0] + '-' + this.getAttribute('href').split('#')[1].split('-')[1];
+                const relatedContents = document.querySelectorAll(`[id^="${formId}"]`);
+                
+                // Remove active class from all tabs and contents in this form
+                siblingTabs.forEach(t => t.classList.remove('active'));
+                relatedContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Get language and show corresponding content
+                const langId = this.getAttribute('href').substring(1);
+                document.getElementById(langId).classList.add('active');
             });
         });
         
