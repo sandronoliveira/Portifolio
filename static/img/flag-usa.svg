@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1235 650">
+  <rect width="1235" height="650" fill="#fff"/>
+  <rect width="1235" height="50" fill="#b22234"/>
+  <rect y="100" width="1235" height="50" fill="#b22234"/>
+  <rect y="200" width="1235" height="50" fill="#b22234"/>
+  <rect y="300" width="1235" height="50" fill="#b22234"/>
+  <rect y="400" width="1235" height="50" fill="#b22234"/>
+  <rect y="500" width="1235" height="50" fill="#b22234"/>
+  <rect y="600" width="1235" height="50" fill="#b22234"/>
+  <rect width="494" height="350" fill="#3c3b6e"/>
+  <g fill="#fff">
+    <g id="usa-s">
+      <g id="usa-r">
+        <path id="usa-s1" d="M23,40 l4,12 h11 l-9,7 l3,12 l-9,-7 l-9,7 l3,-12 l-9,-7 h11 z"/>
+        <path id="usa-s2" transform="translate(49,0)" d="M23,40 l4,12 h11 l-9,7 l3,12 l-9,-7 l-9,7 l3,-12 l-9,-7 h11 z"/>
+        <path id="usa-s3" transform="translate(98,0)" d="M23,40 l4,12 h11 l-9,7 l3,12 l-9,-7 l-9,7 l3,-12 l-9,-7 h11 z"/>
+        <path id="usa-s4" transform="translate(147,0)" d="M23,40 l4,12 h11 l-9,7 l3,12 l-9,-7 l-9,7 l3,-12 l-9,-7 h11 z"/>
+        <path id="usa-s5" transform="translate(196,0)" d="M23,40 l4,12 h11 l-9,7 l3,12 l-9,-7 l-9,7 l3,-12 l-9,-7 h11 z"/>
+        <path id="usa-s6" transform="translate(245,0)" d="M23,40 l4,12 h11 l-9,7 l3,12 l-9,-7 l-9,7 l3,-12 l-9,-7 h11 z"/>
+      </g>
+      <use xlink:href="#usa-r" transform="translate(0,70)"/>
+      <use xlink:href="#usa-r" transform="translate(0,140)"/>
+      <use xlink:href="#usa-r" transform="translate(0,210)"/>
+    </g>
+    <g transform="translate(24.5,35)">
+      <use xlink:href="#usa-s1" transform="translate(0,35)"/>
+      <use xlink:href="#usa-s2" transform="translate(0,35)"/>
+      <use xlink:href="#usa-s3" transform="translate(0,35)"/>
+      <use xlink:href="#usa-s4" transform="translate(0,35)"/>
+      <use xlink:href="#usa-s5" transform="translate(0,35)"/>
+      <use xlink:href="#usa-s1" transform="translate(0,105)"/>
+      <use xlink:href="#usa-s2" transform="translate(0,105)"/>
+      <use xlink:href="#usa-s3" transform="translate(0,105)"/>
+      <use xlink:href="#usa-s4" transform="translate(0,105)"/>
+      <use xlink:href="#usa-s5" transform="translate(0,105)"/>
+      <use xlink:href="#usa-s1" transform="translate(0,175)"/>
+      <use xlink:href="#usa-s2" transform="translate(0,175)"/>
+      <use xlink:href="#usa-s3" transform="translate(0,175)"/>
+      <use xlink:href="#usa-s4" transform="translate(0,175)"/>
+      <use xlink:href="#usa-s5" transform="translate(0,175)"/>
+    </g>
+  </g>
+</svg>

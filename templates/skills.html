@@ -3,176 +3,515 @@
 {% block title %}Competências | Sandron Oliveira Silva{% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <h2>Competências Profissionais</h2>
+<!-- Header da página -->
+<section class="page-header-enhanced">
+    <h1 class="page-title">Competências Profissionais</h1>
     <div class="accent-line"></div>
-    <p>Conjunto de habilidades que adquiri ao longo da minha jornada profissional e acadêmica</p>
+    <p class="page-subtitle">Conjunto de habilidades técnicas e pessoais desenvolvidas ao longo da minha jornada como Engenheiro de IA</p>
 </section>
 
-<section class="skills-container">
-    <div class="skill-category">
-        <div class="category-header">
-            <i class="fas fa-code"></i>
-            <h3>Linguagens de Programação</h3>
+<!-- Visão geral de competências -->
+<section class="skills-overview">
+    <div class="skills-cards">
+        <div class="skill-overview-card">
+            <div class="skill-header">
+                <div class="skill-icon-container">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h2>Machine Learning</h2>
+            </div>
+            <p>Expertise em algoritmos avançados de aprendizado supervisionado, não-supervisionado e por reforço para soluções complexas de IA.</p>
+            <div class="expertise-level">
+                <div class="expertise-label">Nível de Expertise</div>
+                <div class="expertise-bars">
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                </div>
+            </div>
         </div>
-        <div class="skills-grid">
+
+        <div class="skill-overview-card">
+            <div class="skill-header">
+                <div class="skill-icon-container">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h2>Desenvolvimento</h2>
+            </div>
+            <p>Proficiência em linguagens de programação e frameworks para implementação de modelos e sistemas de IA escaláveis.</p>
+            <div class="expertise-level">
+                <div class="expertise-label">Nível de Expertise</div>
+                <div class="expertise-bars">
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="skill-overview-card">
+            <div class="skill-header">
+                <div class="skill-icon-container">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h2>Engenharia de IA</h2>
+            </div>
+            <p>Capacidade de projetar, implementar e otimizar sistemas complexos de IA para aplicações em escala empresarial.</p>
+            <div class="expertise-level">
+                <div class="expertise-label">Nível de Expertise</div>
+                <div class="expertise-bars">
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                    <div class="expertise-bar filled"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção de Linguagens e Ferramentas -->
+<section class="technical-skills">
+    <div class="section-header">
+        <h2>Linguagens de Programação & Ferramentas</h2>
+        <div class="accent-line"></div>
+    </div>
+
+    <div class="skills-container">
+        <div class="skills-column">
+            <h3 class="skills-category-title">
+                <i class="fas fa-code"></i>
+                Linguagens de Programação
+            </h3>
+            
             <div class="skill-item">
                 <div class="skill-info">
                     <h4>Python</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 95%"></div>
+                    <div class="skill-bar-container">
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 98%"></div>
+                        </div>
+                        <span class="skill-percentage">98%</span>
                     </div>
                 </div>
-                <p>Proficiente em desenvolvimento de aplicações, análise de dados e algoritmos de machine learning</p>
+                <div class="skill-details">
+                    <p>Desenvolvimento avançado de sistemas de IA, análise de dados e automação de processos</p>
+                    <div class="skill-badges">
+                        <span class="badge">pandas</span>
+                        <span class="badge">scikit-learn</span>
+                        <span class="badge">TensorFlow</span>
+                        <span class="badge">PyTorch</span>
+                        <span class="badge">NumPy</span>
+                    </div>
+                </div>
             </div>
             
             <div class="skill-item">
                 <div class="skill-info">
                     <h4>SQL</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 90%"></div>
+                    <div class="skill-bar-container">
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 90%"></div>
+                        </div>
+                        <span class="skill-percentage">90%</span>
                     </div>
                 </div>
-                <p>Consultas complexas para manipulação e extração de dados em bancos relacionais</p>
+                <div class="skill-details">
+                    <p>Consultas complexas e manipulação de bancos de dados para análises e aplicações de Big Data</p>
+                    <div class="skill-badges">
+                        <span class="badge">PostgreSQL</span>
+                        <span class="badge">MySQL</span>
+                        <span class="badge">SQLite</span>
+                    </div>
+                </div>
             </div>
             
             <div class="skill-item">
                 <div class="skill-info">
                     <h4>R</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 75%"></div>
+                    <div class="skill-bar-container">
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 75%"></div>
+                        </div>
+                        <span class="skill-percentage">75%</span>
                     </div>
                 </div>
-                <p>Análise estatística e visualização de dados</p>
+                <div class="skill-details">
+                    <p>Análise estatística e visualização de dados para pesquisa em IA</p>
+                    <div class="skill-badges">
+                        <span class="badge">ggplot2</span>
+                        <span class="badge">dplyr</span>
+                        <span class="badge">tidyr</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="skill-category">
-        <div class="category-header">
-            <i class="fas fa-brain"></i>
-            <h3>Machine Learning & IA</h3>
-        </div>
-        <div class="skills-grid">
+        
+        <div class="skills-column">
+            <h3 class="skills-category-title">
+                <i class="fas fa-tools"></i>
+                Frameworks & Plataformas de IA
+            </h3>
+            
             <div class="skill-item">
                 <div class="skill-info">
-                    <h4>TensorFlow</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 85%"></div>
+                    <h4>TensorFlow/Keras</h4>
+                    <div class="skill-bar-container">
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 95%"></div>
+                        </div>
+                        <span class="skill-percentage">95%</span>
                     </div>
                 </div>
-                <p>Desenvolvimento e treinamento de modelos de deep learning</p>
+                <div class="skill-details">
+                    <p>Desenvolvimento e implementação de redes neurais complexas e modelos de deep learning</p>
+                    <div class="skill-badges">
+                        <span class="badge">CNN</span>
+                        <span class="badge">RNN/LSTM</span>
+                        <span class="badge">Transfer Learning</span>
+                        <span class="badge">TensorFlow Serving</span>
+                    </div>
+                </div>
             </div>
             
             <div class="skill-item">
                 <div class="skill-info">
-                    <h4>Scikit-learn</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 90%"></div>
+                    <h4>PyTorch</h4>
+                    <div class="skill-bar-container">
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 90%"></div>
+                        </div>
+                        <span class="skill-percentage">90%</span>
                     </div>
                 </div>
-                <p>Implementação de algoritmos supervisionados e não supervisionados</p>
+                <div class="skill-details">
+                    <p>Pesquisa e desenvolvimento de modelos avançados de IA e deep learning</p>
+                    <div class="skill-badges">
+                        <span class="badge">Transformers</span>
+                        <span class="badge">GANs</span>
+                        <span class="badge">Reinforcement Learning</span>
+                        <span class="badge">TorchServe</span>
+                    </div>
+                </div>
             </div>
             
             <div class="skill-item">
                 <div class="skill-info">
-                    <h4>NLP</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 88%"></div>
+                    <h4>MLOps Tools</h4>
+                    <div class="skill-bar-container">
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: 85%"></div>
+                        </div>
+                        <span class="skill-percentage">85%</span>
                     </div>
                 </div>
-                <p>Processamento de linguagem natural para análise de textos e extração de dados</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="skill-category">
-        <div class="category-header">
-            <i class="fas fa-chart-line"></i>
-            <h3>Análise de Dados</h3>
-        </div>
-        <div class="skills-grid">
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>Pandas</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 92%"></div>
+                <div class="skill-details">
+                    <p>Implantação e monitoramento de modelos de ML em ambientes de produção</p>
+                    <div class="skill-badges">
+                        <span class="badge">Docker</span>
+                        <span class="badge">Kubernetes</span>
+                        <span class="badge">MLflow</span>
+                        <span class="badge">Kubeflow</span>
                     </div>
                 </div>
-                <p>Manipulação e análise de estruturas de dados complexas</p>
-            </div>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>NumPy</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 90%"></div>
-                    </div>
-                </div>
-                <p>Computação numérica e operações matriciais</p>
-            </div>
-            
-            <div class="skill-item">
-                <div class="skill-info">
-                    <h4>PowerBI</h4>
-                    <div class="skill-bar">
-                        <div class="skill-level" style="width: 80%"></div>
-                    </div>
-                </div>
-                <p>Visualização de dados e criação de dashboards interativos</p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="skills-extra">
+<!-- Seção de Áreas de Especialização -->
+<section class="specialization-areas">
     <div class="section-header">
-        <h3>Idiomas</h3>
-        <div class="accent-line small"></div>
+        <h2>Áreas de Especialização em IA</h2>
+        <div class="accent-line"></div>
     </div>
     
-    <div class="languages-grid">
-        <div class="language-item">
-            <span class="language-name">Português</span>
-            <span class="language-level">Nativo, Fluente</span>
-        </div>
-        <div class="language-item">
-            <span class="language-name">Inglês</span>
-            <span class="language-level">Avançado</span>
-        </div>
-        <div class="language-item">
-            <span class="language-name">Espanhol</span>
-            <span class="language-level">Básico</span>
-        </div>
-        <div class="language-item">
-            <span class="language-name">Chinês</span>
-            <span class="language-level">Básico</span>
-        </div>
-    </div>
-    
-    <div class="section-header">
-        <h3>Competências Interpessoais</h3>
-        <div class="accent-line small"></div>
-    </div>
-    
-    <div class="soft-skills">
-        <div class="soft-skill-item">
-            <i class="fas fa-users"></i>
-            <h4>Trabalho em Equipe</h4>
-            <p>Experiência em colaborar com equipes multidisciplinares e atuar em projetos que demandam comunicação clara</p>
+    <div class="specializations-grid">
+        <div class="specialization-card">
+            <div class="specialization-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3>Deep Learning Avançado</h3>
+            <ul class="specialization-list">
+                <li>Arquiteturas de redes neurais complexas (CNN, RNN, Transformers)</li>
+                <li>Modelos generativos (VAEs, GANs, Diffusion Models)</li>
+                <li>Redes neurais autorregressivas e modelos de linguagem</li>
+                <li>Transfer learning e fine-tuning de modelos pré-treinados</li>
+            </ul>
         </div>
         
-        <div class="soft-skill-item">
-            <i class="fas fa-lightbulb"></i>
-            <h4>Pensamento Crítico</h4>
-            <p>Habilidade para identificar desafios em dados e propor soluções inovadoras</p>
+        <div class="specialization-card">
+            <div class="specialization-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h3>Processamento de Linguagem Natural</h3>
+            <ul class="specialization-list">
+                <li>Large Language Models (LLMs) e prompt engineering</li>
+                <li>Embedding de texto e modelos semânticos</li>
+                <li>RAG (Retrieval Augmented Generation)</li>
+                <li>Análise de sentimento e classificação de texto</li>
+            </ul>
         </div>
         
-        <div class="soft-skill-item">
-            <i class="fas fa-tasks"></i>
-            <h4>Resolução de Problemas</h4>
-            <p>Abordagem analítica e estruturada para solucionar problemas complexos</p>
+        <div class="specialization-card">
+            <div class="specialization-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <h3>Visão Computacional</h3>
+            <ul class="specialization-list">
+                <li>Detecção e segmentação de objetos (YOLO, Mask R-CNN)</li>
+                <li>Reconhecimento facial e análise de imagens</li>
+                <li>Geração de imagens com modelos como Stable Diffusion</li>
+                <li>Fusão multimodal de visão e linguagem</li>
+            </ul>
         </div>
+        
+        <div class="specialization-card">
+            <div class="specialization-icon">
+                <i class="fas fa-cloud"></i>
+            </div>
+            <h3>Engenharia de MLOps</h3>
+            <ul class="specialization-list">
+                <li>Desenvolvimento de pipelines de CI/CD para modelos de ML</li>
+                <li>Monitoramento de drift e performance em produção</li>
+                <li>Escalabilidade de sistemas de IA em ambiente cloud</li>
+                <li>Otimização de modelos para inferência eficiente</li>
+            </ul>
+        </div>
+        
+        <div class="specialization-card">
+            <div class="specialization-icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h3>AI Engineering</h3>
+            <ul class="specialization-list">
+                <li>Desenvolvimento de agentes de IA e sistemas inteligentes</li>
+                <li>Integração de modelos de IA em aplicações empresariais</li>
+                <li>Arquitetura de sistemas baseados em IA e LLMs</li>
+                <li>Otimização de custos e eficiência de modelos grandes</li>
+            </ul>
+        </div>
+        
+        <div class="specialization-card">
+            <div class="specialization-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3>Análise Avançada de Dados</h3>
+            <ul class="specialization-list">
+                <li>Modelagem preditiva e série temporal</li>
+                <li>Técnicas de feature engineering para ML</li>
+                <li>Pipeline automatizados de dados para IA</li>
+                <li>Interpretação e explicabilidade de modelos (XAI)</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Seção de Habilidades Interpessoais -->
+<section class="soft-skills-section">
+    <div class="section-header">
+        <h2>Habilidades Interpessoais</h2>
+        <div class="accent-line"></div>
+    </div>
+    
+    <div class="soft-skills-grid">
+        <div class="soft-skill-card">
+            <div class="soft-skill-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="soft-skill-content">
+                <h3>Trabalho em Equipe</h3>
+                <p>Experiência em colaborar com equipes multidisciplinares e liderar projetos técnicos de IA que demandam comunicação clara e eficiente.</p>
+            </div>
+        </div>
+        
+        <div class="soft-skill-card">
+            <div class="soft-skill-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="soft-skill-content">
+                <h3>Pensamento Crítico</h3>
+                <p>Habilidade para identificar desafios em dados complexos e propor soluções inovadoras de IA baseadas em análises aprofundadas.</p>
+            </div>
+        </div>
+        
+        <div class="soft-skill-card">
+            <div class="soft-skill-icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <div class="soft-skill-content">
+                <h3>Resolução de Problemas</h3>
+                <p>Abordagem analítica e estruturada para solucionar problemas complexos com algoritmos de IA, com foco em soluções eficientes e escaláveis.</p>
+            </div>
+        </div>
+        
+        <div class="soft-skill-card">
+            <div class="soft-skill-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="soft-skill-content">
+                <h3>Comunicação Técnica</h3>
+                <p>Capacidade de traduzir conceitos complexos de IA em linguagem acessível para stakeholders e documentar soluções técnicas eficientemente.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção de Idiomas -->
+<!-- Seção de Idiomas com SVGs incorporados -->
+<section class="languages-section">
+    <div class="section-header">
+        <h2>Idiomas</h2>
+        <div class="accent-line"></div>
+    </div>
+    
+    <div class="languages-container">
+        <div class="language-card">
+            <div class="language-info">
+                <div class="language-flag">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 504">
+                        <rect width="720" height="504" fill="#009c3b"/>
+                        <path d="M360 72l288 180-288 180-288-180z" fill="#ffdf00"/>
+                        <circle cx="360" cy="252" r="114" fill="#002776"/>
+                        <path d="M360 340a88 88 0 1 0 0-176 88 88 0 0 0 0 176z" fill="#fff"/>
+                        <path d="M344 186c47 0 87 32 99 76a88 88 0 0 0-166 0c12-44 52-76 67-76z" fill="#009c3b"/>
+                    </svg>
+                </div>
+                <div class="language-details">
+                    <h3>Português</h3>
+                    <p>Nativo</p>
+                </div>
+            </div>
+            <div class="language-level">
+                <div class="language-bar">
+                    <div class="language-progress" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="language-card">
+            <div class="language-info">
+                <div class="language-flag">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1235 650">
+                        <rect width="1235" height="650" fill="#fff"/>
+                        <rect width="1235" height="50" fill="#b22234"/>
+                        <rect y="100" width="1235" height="50" fill="#b22234"/>
+                        <rect y="200" width="1235" height="50" fill="#b22234"/>
+                        <rect y="300" width="1235" height="50" fill="#b22234"/>
+                        <rect y="400" width="1235" height="50" fill="#b22234"/>
+                        <rect y="500" width="1235" height="50" fill="#b22234"/>
+                        <rect y="600" width="1235" height="50" fill="#b22234"/>
+                        <rect width="494" height="350" fill="#3c3b6e"/>
+                        <g fill="#fff">
+                            <!-- Simplificação das estrelas para melhor desempenho -->
+                            <circle cx="40" cy="40" r="9"/>
+                            <circle cx="100" cy="40" r="9"/>
+                            <circle cx="160" cy="40" r="9"/>
+                            <circle cx="220" cy="40" r="9"/>
+                            <circle cx="280" cy="40" r="9"/>
+                            <circle cx="340" cy="40" r="9"/>
+                            
+                            <circle cx="40" cy="100" r="9"/>
+                            <circle cx="100" cy="100" r="9"/>
+                            <circle cx="160" cy="100" r="9"/>
+                            <circle cx="220" cy="100" r="9"/>
+                            <circle cx="280" cy="100" r="9"/>
+                            <circle cx="340" cy="100" r="9"/>
+                            
+                            <circle cx="40" cy="160" r="9"/>
+                            <circle cx="100" cy="160" r="9"/>
+                            <circle cx="160" cy="160" r="9"/>
+                            <circle cx="220" cy="160" r="9"/>
+                            <circle cx="280" cy="160" r="9"/>
+                            <circle cx="340" cy="160" r="9"/>
+                            
+                            <circle cx="40" cy="220" r="9"/>
+                            <circle cx="100" cy="220" r="9"/>
+                            <circle cx="160" cy="220" r="9"/>
+                            <circle cx="220" cy="220" r="9"/>
+                            <circle cx="280" cy="220" r="9"/>
+                            <circle cx="340" cy="220" r="9"/>
+                            
+                            <circle cx="40" cy="280" r="9"/>
+                            <circle cx="100" cy="280" r="9"/>
+                            <circle cx="160" cy="280" r="9"/>
+                            <circle cx="220" cy="280" r="9"/>
+                            <circle cx="280" cy="280" r="9"/>
+                            <circle cx="340" cy="280" r="9"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="language-details">
+                    <h3>Inglês</h3>
+                    <p>Avançado</p>
+                </div>
+            </div>
+            <div class="language-level">
+                <div class="language-bar">
+                    <div class="language-progress" style="width: 85%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="language-card">
+            <div class="language-info">
+                <div class="language-flag">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 500">
+                        <rect width="750" height="500" fill="#c60b1e"/>
+                        <rect y="125" width="750" height="250" fill="#ffc400"/>
+                    </svg>
+                </div>
+                <div class="language-details">
+                    <h3>Espanhol</h3>
+                    <p>Básico</p>
+                </div>
+            </div>
+            <div class="language-level">
+                <div class="language-bar">
+                    <div class="language-progress" style="width: 40%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="language-card">
+            <div class="language-info">
+                <div class="language-flag">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+                        <rect width="900" height="600" fill="#de2910"/>
+                        <g fill="#ffde00">
+                            <path d="M170,120 l-50,154 l131-95 h-162 l131,95 z"/>
+                            <path d="M290,95 l-17,51 l45-33 h-55 l45,33 z"/>
+                            <path d="M290,190 l-17,51 l45-33 h-55 l45,33 z"/>
+                            <path d="M230,230 l-17,51 l45-33 h-55 l45,33 z"/>
+                            <path d="M230,145 l-17,51 l45-33 h-55 l45,33 z"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="language-details">
+                    <h3>Chinês</h3>
+                    <p>Básico</p>
+                </div>
+            </div>
+            <div class="language-level">
+                <div class="language-bar">
+                    <div class="language-progress" style="width: 30%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA para projetos -->
+<section class="skills-cta">
+    <div class="cta-content">
+        <h2>Veja minhas habilidades em ação</h2>
+        <p>Confira meus projetos para ver como aplico essas competências em soluções reais de IA.</p>
+        <a href="{{ url_for('projects') }}" class="btn primary">Ver Projetos</a>
     </div>
 </section>
 {% endblock %}

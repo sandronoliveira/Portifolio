@@ -1,4 +1,106 @@
+// Função para criar o lightbox
+function createLightbox() {
+    // Criar o elemento do lightbox se ainda não existir
+    if (!document.querySelector('.lightbox-overlay')) {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox-overlay';
+        
+        const lightboxContent = document.createElement('div');
+        lightboxContent.className = 'lightbox-content';
+        
+        const lightboxImg = document.createElement('img');
+        lightboxImg.className = 'lightbox-image';
+        
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'lightbox-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeLightbox();
+        });
+        
+        lightboxContent.appendChild(lightboxImg);
+        lightbox.appendChild(lightboxContent);
+        lightbox.appendChild(closeBtn);
+        
+        // Fechar o lightbox ao clicar fora da imagem
+        lightbox.addEventListener('click', function() {
+            closeLightbox();
+        });
+        
+        // Impedir o fechamento ao clicar na imagem
+        lightboxContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Fechar o lightbox com a tecla Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+        
+        document.body.appendChild(lightbox);
+    }
+    
+    return {
+        overlay: document.querySelector('.lightbox-overlay'),
+        image: document.querySelector('.lightbox-image')
+    };
+}
+
+// Função para abrir o lightbox
+function openLightbox(imgSrc) {
+    const { overlay, image } = createLightbox();
+    image.src = imgSrc;
+    
+    // Aguardar o carregamento da imagem para mostrar o lightbox
+    image.onload = function() {
+        setTimeout(() => {
+            overlay.classList.add('active');
+        }, 50);
+    };
+    
+    // Caso a imagem já esteja carregada
+    if (image.complete) {
+        setTimeout(() => {
+            overlay.classList.add('active');
+        }, 50);
+    }
+}
+
+// Função para fechar o lightbox
+function closeLightbox() {
+    const overlay = document.querySelector('.lightbox-overlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Admin tabs functionality
+    const adminTabLinks = document.querySelectorAll('.admin-tabs-nav a');
+    const adminTabContents = document.querySelectorAll('.admin-content .tab-content');
+    
+    if (adminTabLinks.length > 0 && adminTabContents.length > 0) {
+        adminTabLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links and contents
+                adminTabLinks.forEach(l => l.classList.remove('active'));
+                adminTabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Get tab ID and show corresponding content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+    }
+    
     // Auto-hide flash messages after 5 seconds
     const flashMessages = document.querySelectorAll('.flash-messages .message');
     if (flashMessages.length > 0) {
@@ -26,6 +128,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             }
+        });
+    });
+    
+    // Adicionar funcionalidade de lightbox para imagens
+    const imageContainers = [
+        '.project-image img',
+        '.certificate-image img',
+        '.admin-item-image img',
+        '.current-image-preview img'
+    ];
+    
+    imageContainers.forEach(selector => {
+        document.querySelectorAll(selector).forEach(img => {
+            img.addEventListener('click', function() {
+                openLightbox(this.src);
+            });
         });
     });
     
@@ -134,4 +252,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+    
+    // Confirmation dialogs for delete actions
+    document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+        form.onsubmit = function() {
+            return confirm('Tem certeza que deseja excluir este item?');
+        };
+    });
 });
