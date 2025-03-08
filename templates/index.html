@@ -6,29 +6,29 @@
     <div class="hero-content">
         <div class="hero-intro">
             <h1 class="hero-title">Sandron Oliveira Silva</h1>
-            <h2 class="hero-subtitle animated-text">Cientista de Dados & Especialista em IA</h2>
-            <p class="hero-description">Transformando dados em soluções inteligentes para desafios complexos</p>
+            <h2 class="hero-subtitle animated-text">{{ _('Cientista de Dados') }} & {{ _('Especialista em IA') }}</h2>
+            <p class="hero-description">{{ _('Transformando dados em soluções inteligentes') }}</p>
             
             <div class="hero-cta">
-                <a href="{{ url_for('projects') }}" class="btn primary">Meus Projetos</a>
-                <a href="{{ url_for('contact') }}" class="btn secondary">Entre em Contato</a>
+                <a href="{{ url_for('projects') }}" class="btn primary">{{ _('Ver Projetos') }}</a>
+                <a href="{{ url_for('contact') }}" class="btn secondary">{{ _('Entre em Contato') }}</a>
             </div>
         </div>
         <div class="hero-stats">
             <div class="stat-card">
                 <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
                 <div class="stat-number">10+</div>
-                <div class="stat-label">Projetos</div>
+                <div class="stat-label">{{ _('Projetos') }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon"><i class="fas fa-code"></i></div>
                 <div class="stat-number">5+</div>
-                <div class="stat-label">Tecnologias</div>
+                <div class="stat-label">{{ _('Tecnologias') }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon"><i class="fas fa-award"></i></div>
                 <div class="stat-number">7+</div>
-                <div class="stat-label">Certificados</div>
+                <div class="stat-label">{{ _('Certificados') }}</div>
             </div>
         </div>
     </div>
@@ -37,34 +37,30 @@
 <!-- About Section com Design Aprimorado -->
 <section class="about-enhanced">
     <div class="section-header">
-        <h2>Sobre Mim</h2>
+        <h2>{{ _('Sobre Mim') }}</h2>
         <div class="accent-line"></div>
     </div>
     
     <div class="about-content-wrapper">
         <div class="about-text">
             <p class="about-highlight">
-                Especialista em Inteligência Artificial, apaixonado por criar soluções inovadoras através da análise de dados.
+                {{ _('Especialista em Inteligência Artificial, apaixonado por criar soluções inovadoras através da análise de dados.') }}
             </p>
             
             <p>
-                Profissional em formação na área de Inteligência Artificial, com experiência em análise de dados, 
-                modelagem estatística e desenvolvimento de soluções baseadas em Machine Learning e NLP. Busco uma 
-                oportunidade como Cientista de Dados para aplicar técnicas avançadas de análise, modelagem preditiva e 
-                inteligência artificial na extração de insights estratégicos e na otimização de processos.
+                {{ _('Profissional em formação na área de Inteligência Artificial, com experiência em análise de dados, modelagem estatística e desenvolvimento de soluções baseadas em Machine Learning e NLP. Busco uma oportunidade como Cientista de Dados para aplicar técnicas avançadas de análise, modelagem preditiva e inteligência artificial na extração de insights estratégicos e na otimização de processos.') }}
             </p>
             
             <p>
-                Tenho perfil analítico, foco em solução de problemas e experiência no desenvolvimento de soluções escaláveis 
-                alinhadas aos objetivos do negócio.
+                {{ _('Tenho perfil analítico, foco em solução de problemas e experiência no desenvolvimento de soluções escaláveis alinhadas aos objetivos do negócio.') }}
             </p>
             
             <div class="key-skills">
                 <span class="skill-tag">Python</span>
-                <span class="skill-tag">Machine Learning</span>
+                <span class="skill-tag">{{ _('Machine Learning') }}</span>
                 <span class="skill-tag">Deep Learning</span>
                 <span class="skill-tag">NLP</span>
-                <span class="skill-tag">Data Analysis</span>
+                <span class="skill-tag">{{ _('Análise de Dados') }}</span>
                 <span class="skill-tag">PowerBI</span>
             </div>
         </div>
@@ -73,25 +69,25 @@
             <div class="journey-item">
                 <div class="journey-icon"><i class="fas fa-graduation-cap"></i></div>
                 <div class="journey-content">
-                    <h3>Formação Acadêmica</h3>
-                    <p>Tecnólogo em Inteligência Artificial - FIAP</p>
-                    <small>GPA 4.0, Média 93/100</small>
+                    <h3>{{ _('Formação Acadêmica') }}</h3>
+                    <p>{{ _('Tecnólogo em Inteligência Artificial - FIAP') }}</p>
+                    <small>GPA 4.0, {{ _('Média') }} 93/100</small>
                 </div>
             </div>
             
             <div class="journey-item">
                 <div class="journey-icon"><i class="fas fa-trophy"></i></div>
                 <div class="journey-content">
-                    <h3>Conquistas</h3>
-                    <p>Vencedor do Challenge B3 - 1º Lugar, Next 2024</p>
+                    <h3>{{ _('Conquistas') }}</h3>
+                    <p>{{ _('Vencedor do Challenge B3 - 1º Lugar, Next 2024') }}</p>
                 </div>
             </div>
             
             <div class="journey-item">
                 <div class="journey-icon"><i class="fas fa-lightbulb"></i></div>
                 <div class="journey-content">
-                    <h3>Especialidades</h3>
-                    <p>Análise de dados, modelagem preditiva e NLP</p>
+                    <h3>{{ _('Especialidades') }}</h3>
+                    <p>{{ _('Análise de dados, modelagem preditiva e NLP') }}</p>
                 </div>
             </div>
         </div>
@@ -101,19 +97,19 @@
 <!-- Destaque de Projetos -->
 <section class="featured-projects-enhanced">
     <div class="section-header">
-        <h2>Projetos em Destaque</h2>
+        <h2>{{ _('Projetos em Destaque') }}</h2>
         <div class="accent-line"></div>
     </div>
     
     <div class="featured-projects-grid">
         <div class="featured-project">
             <div class="project-preview">
-                <div class="project-badge">Destaque</div>
+                <div class="project-badge">{{ _('Destaque') }}</div>
                 <h3>Saturn</h3>
-                <p class="project-tagline">Banco de dados de ETFs com NLP</p>
+                <p class="project-tagline">{{ _('Banco de dados de ETFs com NLP') }}</p>
                 <div class="project-highlights">
-                    <p class="highlight-item"><i class="fas fa-star"></i> Vencedor do Challenge B3 - 1º Lugar</p>
-                    <p>Desenvolvimento de solução para integração ao FundosNET com técnicas avançadas de busca e NLP para análise de documentos financeiros.</p>
+                    <p class="highlight-item"><i class="fas fa-star"></i> {{ _('Vencedor do Challenge B3 - 1º Lugar') }}</p>
+                    <p>{{ _('Desenvolvimento de solução para integração ao FundosNET com técnicas avançadas de busca e NLP para análise de documentos financeiros.') }}</p>
                 </div>
                 <div class="project-tech-tags">
                     <span>ElasticSearch</span>
@@ -126,11 +122,11 @@
         
         <div class="featured-project">
             <div class="project-preview">
-                <div class="project-badge">Inovação</div>
-                <h3>Projeto S.A.L.V.A.</h3>
-                <p class="project-tagline">Sistema de Reconhecimento Visual</p>
+                <div class="project-badge">{{ _('Inovação') }}</div>
+                <h3>{{ _('Projeto S.A.L.V.A.') }}</h3>
+                <p class="project-tagline">{{ _('Sistema de Reconhecimento Visual') }}</p>
                 <div class="project-highlights">
-                    <p>Sistema de visão computacional para auxílio em resgates de vítimas de inundações usando redes neurais convolucionais para detecção de pessoas em áreas alagadas.</p>
+                    <p>{{ _('Sistema de visão computacional para auxílio em resgates de vítimas de inundações usando redes neurais convolucionais para detecção de pessoas em áreas alagadas.') }}</p>
                 </div>
                 <div class="project-tech-tags">
                     <span>Yolo V5</span>
@@ -144,7 +140,7 @@
     
     <div class="section-footer">
         <a href="{{ url_for('projects') }}" class="btn primary with-arrow">
-            Ver Todos os Projetos
+            {{ _('Ver Todos os Projetos') }}
             <i class="fas fa-arrow-right"></i>
         </a>
     </div>
@@ -153,33 +149,33 @@
 <!-- Seção de Especialidades -->
 <section class="specialty-cards">
     <div class="section-header">
-        <h2>Áreas de Especialização</h2>
+        <h2>{{ _('Áreas de Especialização') }}</h2>
         <div class="accent-line"></div>
     </div>
     
     <div class="specialty-grid">
         <div class="specialty-card">
             <div class="specialty-icon"><i class="fas fa-brain"></i></div>
-            <h3>Machine Learning</h3>
-            <p>Desenvolvimento e implementação de algoritmos de ML para resolver problemas complexos de negócios.</p>
+            <h3>{{ _('Machine Learning') }}</h3>
+            <p>{{ _('Desenvolvimento e implementação de algoritmos de ML para resolver problemas complexos de negócios.') }}</p>
         </div>
         
         <div class="specialty-card">
             <div class="specialty-icon"><i class="fas fa-comments"></i></div>
-            <h3>NLP</h3>
-            <p>Processamento de linguagem natural para análise de textos, classificação e extração de insights.</p>
+            <h3>{{ _('NLP') }}</h3>
+            <p>{{ _('Processamento de linguagem natural para análise de textos, classificação e extração de insights.') }}</p>
         </div>
         
         <div class="specialty-card">
             <div class="specialty-icon"><i class="fas fa-chart-line"></i></div>
-            <h3>Análise de Dados</h3>
-            <p>Transformação de dados brutos em insights acionáveis para tomada de decisões estratégicas.</p>
+            <h3>{{ _('Análise de Dados') }}</h3>
+            <p>{{ _('Transformação de dados brutos em insights acionáveis para tomada de decisões estratégicas.') }}</p>
         </div>
         
         <div class="specialty-card">
             <div class="specialty-icon"><i class="fas fa-robot"></i></div>
-            <h3>Deep Learning</h3>
-            <p>Implementação de redes neurais profundas para visão computacional e outras aplicações.</p>
+            <h3>{{ _('Deep Learning') }}</h3>
+            <p>{{ _('Implementação de redes neurais profundas para visão computacional e outras aplicações.') }}</p>
         </div>
     </div>
 </section>
@@ -187,9 +183,9 @@
 <!-- Call-to-Action Final -->
 <section class="contact-cta">
     <div class="cta-content">
-        <h2>Interessado em colaborar?</h2>
-        <p>Estou aberto a oportunidades de projetos e colaborações em ciência de dados e IA.</p>
-        <a href="{{ url_for('contact') }}" class="btn primary">Entre em Contato</a>
+        <h2>{{ _('Interessado em colaborar?') }}</h2>
+        <p>{{ _('Estou aberto a oportunidades de projetos e colaborações em ciência de dados e IA.') }}</p>
+        <a href="{{ url_for('contact') }}" class="btn primary">{{ _('Entre em Contato') }}</a>
     </div>
 </section>
 {% endblock %}

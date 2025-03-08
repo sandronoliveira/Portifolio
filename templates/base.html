@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="{{ g.locale }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,24 +20,30 @@
                     {% endif %}
                 </div>
                 <h1>Sandron Oliveira Silva</h1>
-                <p class="title">Especialista em IA | Cientista de Dados</p>
+                <p class="title">{{ _('Especialista em IA') }} | {{ _('Cientista de Dados') }}</p>
             </div>
             
             <nav class="main-nav">
-                <ul>
-                    <li><a href="{{ url_for('index') }}" {% if request.path == url_for('index') %}class="active"{% endif %}><i class="fas fa-home"></i> Início</a></li>
-                    <li><a href="{{ url_for('projects') }}" {% if request.path == url_for('projects') %}class="active"{% endif %}><i class="fas fa-project-diagram"></i> Projetos</a></li>
-                    <li><a href="{{ url_for('skills') }}" {% if request.path == url_for('skills') %}class="active"{% endif %}><i class="fas fa-brain"></i> Competências</a></li>
-                    <li><a href="{{ url_for('education') }}" {% if request.path == url_for('education') %}class="active"{% endif %}><i class="fas fa-graduation-cap"></i> Formação</a></li>
-                    <li><a href="{{ url_for('contact') }}" {% if request.path == url_for('contact') %}class="active"{% endif %}><i class="fas fa-envelope"></i> Contato</a></li>
+                <ul>    
+                    <li><a href="{{ url_for('index') }}" {% if request.path == url_for('index') %}class="active"{% endif %}><i class="fas fa-home"></i> {{ _('Início') }}</a></li>
+                    <li><a href="{{ url_for('projects') }}" {% if request.path == url_for('projects') %}class="active"{% endif %}><i class="fas fa-project-diagram"></i> {{ _('Projetos') }}</a></li>
+                    <li><a href="{{ url_for('skills') }}" {% if request.path == url_for('skills') %}class="active"{% endif %}><i class="fas fa-brain"></i> {{ _('Competências') }}</a></li>
+                    <li><a href="{{ url_for('education') }}" {% if request.path == url_for('education') %}class="active"{% endif %}><i class="fas fa-graduation-cap"></i> {{ _('Formação') }}</a></li>
+                    <li><a href="{{ url_for('contact') }}" {% if request.path == url_for('contact') %}class="active"{% endif %}><i class="fas fa-envelope"></i> {{ _('Contato') }}</a></li>
                 </ul>
             </nav>
+            
+            <div class="language-switcher">
+                <a href="{{ url_for('set_language', language='pt-br') }}" class="lang-item {% if g.locale == 'pt-br' %}active{% endif %}">PT-BR</a>
+                <span class="lang-separator">|</span>
+                <a href="{{ url_for('set_language', language='en-us') }}" class="lang-item {% if g.locale == 'en-us' %}active{% endif %}">EN-US</a>
+            </div>
             
             <div class="social-links">
                 <a href="https://www.linkedin.com/in/sandronoliveira/" target="_blank"><i class="fab fa-linkedin"></i></a>
                 <a href="mailto:sandrono61@gmail.com"><i class="fas fa-envelope"></i></a>
                 <a href="tel:+5511913349334"><i class="fas fa-phone"></i></a>
-                <a href="{{ url_for('login') }}" title="Admin Login"><i class="fas fa-lock"></i></a>
+                <a href="{{ url_for('login') }}" title="{{ _('Admin Login') }}"><i class="fas fa-lock"></i></a>
             </div>
         </aside>
         
@@ -46,7 +52,7 @@
                 {% if messages %}
                     <div class="flash-messages">
                         {% for message in messages %}
-                            <div class="message">{{ message }}</div>
+                            <div class="message">{{ _(message) }}</div>
                         {% endfor %}
                     </div>
                 {% endif %}
@@ -56,13 +62,14 @@
         </main>
     </div>
     
+    
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}
     <footer class="site-footer">
         <div class="footer-content">
             <div class="footer-info">
-                <p>© <span class="current-year">2025</span> Sandron Oliveira Silva - Todos os direitos reservados</p>
-                <p class="footer-credits">Portfolio desenvolvido com <i class="fas fa-heart"></i> por Sandron Oliveira Silva</p>
+                <p>© <span class="current-year">2025</span> Sandron Oliveira Silva - {{ _('Todos os direitos reservados') }}</p>
+                <p class="footer-credits">{{ _('Portfolio desenvolvido com') }} <i class="fas fa-heart"></i> {{ _('por') }} Sandron Oliveira Silva</p>
             </div>
             <div class="footer-social">
                 <a href="https://www.linkedin.com/in/sandronoliveira/" target="_blank"><i class="fab fa-linkedin"></i></a>

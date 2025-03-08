@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory, jsonify, g
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,6 +13,143 @@ app.static_url_path = '/static'
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.config['LANGUAGES'] = ['pt-br', 'en-us']
+app.config['DEFAULT_LANGUAGE'] = 'pt-br'
+
+# Dicionários de tradução
+translations = {
+    'pt-br': {},  # O português é o idioma padrão, então usamos texto original
+    'en-us': {
+        'Painel Administrativo': 'Administrative Panel',
+        'Voltar ao Painel': 'Back to Panel',
+        'Sair': 'Logout',
+        'Usuário': 'Username',
+        'Senha': 'Password',
+        'Entrar': 'Login',
+        'Área Administrativa': 'Administrative Area',
+        'Digite suas credenciais para acessar': 'Enter your credentials to access',
+        'Nome de usuário ou senha inválidos': 'Invalid username or password',
+        'Início': 'Home',
+        'Projetos': 'Projects',
+        'Competências': 'Skills',
+        'Formação': 'Education',
+        'Contato': 'Contact',
+        'Especialista em IA': 'AI Specialist',
+        'Cientista de Dados': 'Data Scientist',
+        'Transformando dados em soluções inteligentes': 'Transforming data into intelligent solutions',
+        'Ver Projetos': 'View Projects',
+        'Sobre Mim': 'About Me',
+        'Desenvolvimento': 'Development',
+        'Machine Learning': 'Machine Learning',
+        'NLP': 'NLP',
+        'Projetos em Destaque': 'Featured Projects',
+        'Ver Todos os Projetos': 'View All Projects',
+        'Confira os projetos que desenvolvi aplicando minhas habilidades em ciência de dados e inteligência artificial': 'Check out the projects I\'ve developed applying my skills in data science and artificial intelligence',
+        'Em Andamento': 'In Progress',
+        'Competências Profissionais': 'Professional Skills',
+        'Conjunto de habilidades que adquiri ao longo da minha jornada profissional e acadêmica': 'Set of skills I\'ve acquired throughout my professional and academic journey',
+        'Linguagens de Programação': 'Programming Languages',
+        'Análise de Dados': 'Data Analysis',
+        'Idiomas': 'Languages',
+        'Competências Interpessoais': 'Interpersonal Skills',
+        'Trabalho em Equipe': 'Teamwork',
+        'Pensamento Crítico': 'Critical Thinking',
+        'Resolução de Problemas': 'Problem Solving',
+        'Formação Acadêmica': 'Academic Education',
+        'Certificados e Cursos Complementares': 'Certificates and Complementary Courses',
+        'Nenhum certificado cadastrado no momento.': 'No certificates registered at the moment.',
+        'Entre em contato para oportunidades de trabalho, colaborações ou qualquer outra informação': 'Get in touch for job opportunities, collaborations or any other information',
+        'E-mail': 'Email',
+        'Telefone': 'Phone',
+        'Localização': 'Location',
+        'Envie uma mensagem': 'Send a message',
+        'Preencha o formulário abaixo e entrarei em contato o mais breve possível': 'Fill out the form below and I\'ll get back to you as soon as possible',
+        'Nome': 'Name',
+        'Assunto': 'Subject',
+        'Mensagem': 'Message',
+        'Enviar Mensagem': 'Send Message',
+        'Mensagem enviada com sucesso!': 'Message sent successfully!',
+        'Obrigado por entrar em contato. Responderei sua mensagem o mais breve possível.': 'Thank you for contacting me. I will reply to your message as soon as possible.',
+        'Voltar para o início': 'Back to Home',
+        'Perfil': 'Profile',
+        'Certificados': 'Certificates',
+        'Foto de Perfil': 'Profile Picture',
+        'Nenhuma foto de perfil definida': 'No profile picture defined',
+        'Selecione uma nova foto': 'Select a new photo',
+        'Atualizar Foto de Perfil': 'Update Profile Picture',
+        'Adicionar Novo Certificado': 'Add New Certificate',
+        'Título do Certificado': 'Certificate Title',
+        'Instituição': 'Institution',
+        'Data de Conclusão': 'Completion Date',
+        'Imagem do Certificado (opcional)': 'Certificate Image (optional)',
+        'Em Andamento': 'In Progress',
+        'Marque esta opção se o certificado está em curso': 'Check this option if the certificate is in progress',
+        'Descrição (opcional)': 'Description (optional)',
+        'Adicionar Certificado': 'Add Certificate',
+        'Certificados Existentes': 'Existing Certificates',
+        'Nenhum certificado cadastrado.': 'No certificates registered.',
+        'Atualizar Imagem': 'Update Image',
+        'Adicionar Imagem': 'Add Image',
+        'Tem certeza que deseja excluir este certificado?': 'Are you sure you want to delete this certificate?',
+        'Adicionar Novo Projeto': 'Add New Project',
+        'Título do Projeto': 'Project Title',
+        'Subtítulo': 'Subtitle',
+        'Imagem do Projeto (opcional)': 'Project Image (optional)',
+        'Marque esta opção se o projeto está em desenvolvimento': 'Check this option if the project is in development',
+        'Descrição': 'Description',
+        'Use linhas separadas com marcadores (- item) para melhor formatação': 'Use separate lines with markers (- item) for better formatting',
+        'Tecnologias Utilizadas': 'Technologies Used',
+        'Separadas por vírgula (Ex: Python, Flask, TensorFlow)': 'Separated by comma (E.g.: Python, Flask, TensorFlow)',
+        'Adicionar Projeto': 'Add Project',
+        'Projetos Existentes': 'Existing Projects',
+        'Nenhum projeto cadastrado.': 'No projects registered.',
+        'Editar Certificado': 'Edit Certificate',
+        'Envie uma nova imagem para substituir a atual': 'Upload a new image to replace the current one',
+        'Salvar Alterações': 'Save Changes',
+        'Cancelar': 'Cancel',
+        'Editar Projeto': 'Edit Project',
+        'Escolha seu idioma': 'Choose your language',
+        'Selecione o idioma preferido': 'Select your preferred language',
+        'Continuar': 'Continue',
+        'Selecionar idioma': 'Select language'
+    }
+}
+
+# Adicione estas funções antes da definição das rotas
+
+def get_locale():
+    """Obtém o idioma da sessão ou o padrão."""
+    return session.get('language', app.config['DEFAULT_LANGUAGE'])
+
+def _(text):
+    """Função de tradução simples."""
+    locale = get_locale()
+    if locale == app.config['DEFAULT_LANGUAGE']:
+        return text
+    return translations[locale].get(text, text)
+
+@app.before_request
+def before_request():
+    """Executa antes de cada requisição para configurar o idioma."""
+    g.locale = get_locale()
+    g._ = _  # Torna a função de tradução disponível nos templates
+
+
+@app.route('/set_language/<language>')
+def set_language(language):
+    """Define o idioma do usuário."""
+    if language in app.config['LANGUAGES']:
+        session['language'] = language
+        if request.referrer:
+            return redirect(request.referrer)
+    return redirect(url_for('index'))
+
+@app.route('/language_prompt')
+def language_prompt():
+    """Página para seleção de idioma."""
+    return render_template('language_prompt.html')
+
 
 # Configurações de produção para Railway
 if os.environ.get('RAILWAY_ENVIRONMENT'):
@@ -468,8 +605,11 @@ def initialize_db():
         # Executar migrações para adicionar novas colunas se necessário
         migrate_database()
         
-        # Verificar se admin existe, se não criar um
-        if not User.query.filter_by(username='admin').first():
+        # Verificar se o usuário admin já existe
+        admin_exists = User.query.filter_by(username='admin').first() is not None
+        
+        # Apenas adicionar dados iniciais se o admin não existir
+        if not admin_exists:
             admin = User(username='admin')
             admin.set_password('password')  # CHANGE THIS PASSWORD IN PRODUCTION
             db.session.add(admin)
@@ -525,11 +665,22 @@ def initialize_db():
                 db.session.add(cert)
                 
             db.session.commit()
+            print("Banco de dados inicializado com dados padrão.")
+        else:
+            print("Usuário admin já existe. Pulando inicialização de dados.")
+
 
 @app.route('/obrigado')
 def obrigado():
     return render_template('obrigado.html', user=User.query.first())
 
+@app.context_processor
+def utility_processor():
+    """Adiciona funções utilitárias aos templates."""
+    return {
+        '_': _,
+        'get_locale': get_locale
+    }
 
 if __name__ == '__main__':
     initialize_db()

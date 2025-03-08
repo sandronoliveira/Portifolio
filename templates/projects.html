@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Projetos | Sandron Oliveira Silva{% endblock %}
+{% block title %}{{ _('Projetos') }} | Sandron Oliveira Silva{% endblock %}
 
 {% block content %}
 <section class="page-header">
-    <h2>Projetos</h2>
+    <h2>{{ _('Projetos') }}</h2>
     <div class="accent-line"></div>
-    <p>Confira os projetos que desenvolvi aplicando minhas habilidades em ciência de dados e inteligência artificial</p>
+    <p>{{ _('Confira os projetos que desenvolvi aplicando minhas habilidades em ciência de dados e inteligência artificial') }}</p>
 </section>
 
 <section class="projects-grid">
@@ -16,11 +16,11 @@
         <div class="project-image">
             <img src="{{ url_for('uploaded_file', filename='projects/' + project.image) }}" alt="{{ project.title }}">
             {% if project.in_progress %}
-            <div class="project-status">Em Andamento</div>
+            <div class="project-status">{{ _('Em Andamento') }}</div>
             {% endif %}
         </div>
         {% elif project.in_progress %}
-        <div class="project-status-banner">Em Andamento</div>
+        <div class="project-status-banner">{{ _('Em Andamento') }}</div>
         {% endif %}
         <div class="project-content">
             <h3>{{ project.title }}</h3>
@@ -41,7 +41,7 @@
     </div>
     {% else %}
     <div class="empty-state">
-        <p>Nenhum projeto cadastrado no momento.</p>
+        <p>{{ _('Nenhum projeto cadastrado no momento.') }}</p>
     </div>
     {% endfor %}
 </section>

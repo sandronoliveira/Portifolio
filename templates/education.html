@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Formação | Sandron Oliveira Silva{% endblock %}
+{% block title %}{{ _('Formação') }} | Sandron Oliveira Silva{% endblock %}
 
 {% block content %}
 <section class="page-header">
-    <h2>Formação Acadêmica</h2>
+    <h2>{{ _('Formação Acadêmica') }}</h2>
     <div class="accent-line"></div>
 </section>
 
@@ -17,13 +17,13 @@
         <div class="timeline-content">
             <div class="education-card current">
                 <div class="education-header">
-                    <h3>Tecnólogo em Inteligência Artificial</h3>
-                    <span class="education-period">Cursando</span>
+                    <h3>{{ _('Tecnólogo em Inteligência Artificial') }}</h3>
+                    <span class="education-period">{{ _('Cursando') }}</span>
                 </div>
                 <div class="education-body">
                     <p class="education-institution">FIAP</p>
-                    <p>GPA 4.0, Média 93/100</p>
-                    <p>Cursando no período noturno</p>
+                    <p>GPA 4.0, {{ _('Média') }} 93/100</p>
+                    <p>{{ _('Cursando no período noturno') }}</p>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@
 
 <section class="certificates-section">
     <div class="section-header">
-        <h2>Certificados e Cursos Complementares</h2>
+        <h2>{{ _('Certificados e Cursos Complementares') }}</h2>
         <div class="accent-line"></div>
     </div>
     
@@ -43,7 +43,7 @@
             <div class="certificate-image">
                 <img src="{{ url_for('uploaded_file', filename='certificates/' + certificate.image) }}" alt="{{ certificate.title }}">
                 {% if certificate.in_progress %}
-                <div class="certificate-status-ribbon">Em Andamento</div>
+                <div class="certificate-status-ribbon">{{ _('Em Andamento') }}</div>
                 {% endif %}
             </div>
             {% else %}
@@ -57,7 +57,7 @@
             <div class="certificate-info">
                 <h3>{{ certificate.title }}
                     {% if certificate.in_progress %}
-                    <span class="status-badge">Em Andamento</span>
+                    <span class="status-badge">{{ _('Em Andamento') }}</span>
                     {% endif %}
                 </h3>
                 <p class="certificate-institution">{{ certificate.institution }}</p>
@@ -71,7 +71,7 @@
         </div>
         {% else %}
         <div class="empty-state">
-            <p>Nenhum certificado cadastrado no momento.</p>
+            <p>{{ _('Nenhum certificado cadastrado no momento.') }}</p>
         </div>
         {% endfor %}
     </div>

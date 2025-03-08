@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="{{ g.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandron Oliveira Silva | {{ _('Selecionar idioma') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .language-card {
+            background-color: var(--card-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(30, 58, 138, 0.05);
+        }
+        
+        .language-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .language-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .language-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .language-option {
+            background-color: var(--bg-color);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+            border-radius: var(--radius);
+            padding: 1.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .language-option:hover, .language-option.selected {
+            background-color: rgba(59, 130, 246, 0.05);
+            border-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+        
+        .language-option.selected {
+            border-width: 2px;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.1);
+        }
+        
+        .language-flag {
+            width: 60px;
+            height: 40px;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-name {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .language-native {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+        
+        .btn-continue {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.85rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="language-card">
+        <h1 class="language-title">{{ _('Escolha seu idioma') }} / {{ _('Choose your language') }}</h1>
+        <p class="language-subtitle">{{ _('Selecione o idioma preferido') }} / {{ _('Select your preferred language') }}</p>
+        
+        <div class="language-options">
+            <div class="language-option" data-lang="pt-br">
+                <div class="language-flag">
+                    <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+                        <g fill-rule="evenodd" stroke-width="1pt">
+                            <path fill="#229e45" d="M0 0h640v480H0z"/>
+                            <path fill="#f8e509" d="M321.4 436l301.5-195.7L319.6 44 17.1 240.7 321.4 436z"/>
+                            <path fill="#2b49a3" d="M452.8 240c0 70.3-57.1 127.3-127.6 127.3A127.4 127.4 0 1 1 452.8 240z"/>
+                            <path fill="#ffffef" d="M283.3 316.3l-4-2.3-4 2 .9-4.5-3.2-3.4 4.5-.5 2.2-4 1.9 4.2 4.4.8-3.3 3m86 26.3l-3.9-2.3-4 2 .9-4.5-3.3-3.3 4.5-.6 2.2-4 2 4.2 4.4.9-3.4 3.1m-36.2-30l-3.4-2-3.5 1.8.8-3.9-2.8-2.9 4-.5 1.9-3.5 1.6 3.7 3.9.7-3 2.7m87-8.5l-3.4-2-3.5 1.8.8-3.9-2.7-2.8 3.9-.6 1.9-3.5 1.6 3.7 3.8.7-2.9 2.7m-87.3-22l-4-2.2-4 2 .8-4.6-3.1-3.3 4.5-.6 2.1-4 2 4.2 4.5.8-3.3 3.1m-86.3-16l-4-2.2-4 2 1-4.6-3.3-3.3 4.6-.5 2-4.1 2 4.2 4.4.8-3.2 3.1m42.5-9.7l-4-2.2-4 2 .9-4.6-3.2-3.3 4.5-.6 2.1-4 2 4.2 4.4.9-3.3 3m-56.2-6.5l-3.3-1.8-3.3 1.7.7-3.8-2.7-2.8 3.8-.5 1.8-3.4 1.6 3.5 3.7.7-2.8 2.7m86.3 11.8l-3.4-2-3.4 1.8.7-3.9-2.7-2.8 3.9-.6 1.9-3.4 1.6 3.6 3.9.7-3 2.7"/>
+                        </g>
+                    </svg>
+                </div>
+                <span class="language-name">{{ _('Português') }}</span>
+                <span class="language-native">{{ _('Brasil') }}</span>
+            </div>
+            
+            <div class="language-option" data-lang="en-us">
+                <div class="language-flag">
+                    <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#bd3d44" d="M0 0h640v480H0"/>
+                        <path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
+                        <path fill="#192f5d" d="M0 0h364.8v258.5H0"/>
+                        <marker id="us-a" markerHeight="30" markerWidth="30">
+                            <path fill="#fff" d="M14 0l9 27L0 10h28L5 27z"/>
+                        </marker>
+                        <path fill="none" marker-mid="url(#us-a)" d="M0 0l16 11h61 61 61 61 60L47 37h61 61 60 61L16 63h61 61 61 61 60L47 89h61 61 60 61L16 115h61 61 61 61 60L47 141h61 61 60 61L16 166h61 61 61 61 60L47 192h61 61 60 61L16 218h61 61 61 61 60L47 244h61 61 60 61"/>
+                    </svg>
+                </div>
+                <span class="language-name">{{ _('English') }}</span>
+                <span class="language-native">{{ _('United States') }}</span>
+            </div>
+        </div>
+        
+        <button class="btn-continue" id="btn-continue" disabled>{{ _('Continuar') }} / {{ _('Continue') }}</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selecionar elementos
+            const languageOptions = document.querySelectorAll('.language-option');
+            const btnContinue = document.getElementById('btn-continue');
+            let selectedLanguage = null;
+            
+            // Adicionar evento de clique às opções de idioma
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remover classe selecionada de todas as opções
+                    languageOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Adicionar classe selecionada à opção clicada
+                    this.classList.add('selected');
+                    
+                    // Armazenar o idioma selecionado
+                    selectedLanguage = this.getAttribute('data-lang');
+                    
+                    // Habilitar botão de continuar
+                    btnContinue.disabled = false;
+                });
+            });
+            
+            // Adicionar evento de clique ao botão continuar
+            btnContinue.addEventListener('click', function() {
+                if (selectedLanguage) {
+                    // Redirecionar para a rota de definição de idioma
+                    window.location.href = '/set_language/' + selectedLanguage;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
