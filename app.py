@@ -214,6 +214,7 @@ translations = {
         'Estou aberto a oportunidades de projetos e colaborações em ciência de dados e IA.': 'I am open to project opportunities and collaborations in data science and AI.',
         'Entre em Contato': 'Get in Touch',
         'Conquistas': 'Achievements',
+        'Tecnologias': 'Technologies',
         'Vencedor do Challenge B3 - 1º Lugar, Next 2024': 'Winner of B3 Challenge - 1st Place, Next 2024',
         'Especialidades': 'Specialties',
         'Análise de dados, modelagem preditiva e NLP': 'Data analysis, predictive modeling, and NLP',
@@ -919,7 +920,7 @@ def initialize_db():
         # Apenas adicionar dados iniciais se o admin não existir
         if not admin_exists:
             admin = User(username='admin')
-            admin.set_password('password')  # CHANGE THIS PASSWORD IN PRODUCTION
+            admin.set_password('passwordghafhfaso')  # CHANGE THIS PASSWORD IN PRODUCTION
             db.session.add(admin)
             
             # Adicionar projetos iniciais do CV
