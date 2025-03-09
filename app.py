@@ -6,16 +6,37 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 from datetime import datetime
+import logging
+from logging.handlers import RotatingFileHandler
 
+# Initialize Flask app
 app = Flask(__name__)
 app.static_folder = 'static'
 app.static_url_path = '/static'
-app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
+
+# Configure secret key - use environment variable in production
+if os.environ.get('FLASK_ENV') == 'production':
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-default-production-key-change-this')
+else:
+    app.config['SECRET_KEY'] = os.urandom(24)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///portfolio.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['LANGUAGES'] = ['pt-br', 'en-us']
 app.config['DEFAULT_LANGUAGE'] = 'pt-br'
+
+# Set up logging
+if not os.path.exists('logs'):
+    os.mkdir('logs')
+file_handler = RotatingFileHandler('logs/portfolio.log', maxBytes=10240, backupCount=10)
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+))
+file_handler.setLevel(logging.INFO)
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info('Portfolio startup')
 
 # Dicionários de tradução
 translations = {
@@ -379,15 +400,16 @@ def language_prompt():
 # Configurações de produção para Railway
 if os.environ.get('RAILWAY_ENVIRONMENT'):
     app.config['PREFERRED_URL_SCHEME'] = 'https'
-    # Remova a linha abaixo se causar problemas
-    # app.config['SERVER_NAME'] = 'www.sandron.dev.br'
+    # Use as variáveis de ambiente para definir o host, caso necessário
+    # app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME', 'www.sandron.dev.br')
 
 # Configurações para upload de imagens
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['PROFILE_PICS'] = os.path.join(app.config['UPLOAD_FOLDER'], 'profile')
 app.config['PROJECT_IMGS'] = os.path.join(app.config['UPLOAD_FOLDER'], 'projects')
 app.config['CERTIFICATE_IMGS'] = os.path.join(app.config['UPLOAD_FOLDER'], 'certificates')
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Limite de 16 MB para uploads
 
 # Criação de diretórios de upload se não existirem
 for directory in [app.config['UPLOAD_FOLDER'], app.config['PROFILE_PICS'], 
@@ -400,10 +422,28 @@ login_manager.login_view = 'login'
 
 # Função para verificar extensões de arquivo permitidas
 def allowed_file(filename):
+    """
+    Verifica se o arquivo tem uma extensão permitida.
+    
+    Args:
+        filename (str): Nome do arquivo
+        
+    Returns:
+        bool: True se a extensão do arquivo é permitida, False caso contrário
+    """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 # Função para gerar nomes de arquivo únicos
 def generate_unique_filename(filename):
+    """
+    Gera um nome de arquivo único.
+    
+    Args:
+        filename (str): Nome original do arquivo
+        
+    Returns:
+        str: Nome de arquivo único com a mesma extensão
+    """
     ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
     new_filename = f"{uuid.uuid4().hex}.{ext}"
     return new_filename
@@ -457,6 +497,29 @@ def load_user(user_id):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# Manipulação de erros
+@app.errorhandler(404)
+def page_not_found(e):
+    """Manipula erros 404 (página não encontrada)."""
+    user = User.query.first()
+    return render_template('error.html', error_code=404, 
+                          error_message=_('Página não encontrada'), user=user), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    """Manipula erros 500 (erro interno do servidor)."""
+    user = User.query.first()
+    app.logger.error(f'Erro interno: {str(e)}')
+    return render_template('error.html', error_code=500, 
+                          error_message=_('Erro interno do servidor'), user=user), 500
+
+@app.errorhandler(413)
+def request_entity_too_large(e):
+    """Manipula erros 413 (arquivo muito grande)."""
+    user = User.query.first()
+    flash(_('O arquivo enviado é muito grande. Tamanho máximo permitido: 16 MB.'))
+    return redirect(request.referrer or url_for('admin'))
+
 # Routes
 @app.route('/')
 def index():
@@ -502,6 +565,7 @@ def login():
             return redirect(next_page or url_for('admin'))
         else:
             flash(_('Nome de usuário ou senha inválidos'))
+            app.logger.warning(f'Tentativa de login malsucedida: {username}')
     
     user = User.query.first()
     return render_template('login.html', user=user)
@@ -533,24 +597,29 @@ def upload_profile_image():
         return redirect(url_for('admin'))
         
     if file and allowed_file(file.filename):
-        # Excluir imagem antiga se existir
-        user = User.query.get(current_user.id)
-        if user.profile_image:
-            old_image_path = os.path.join(app.config['PROFILE_PICS'], user.profile_image)
-            if os.path.exists(old_image_path):
-                os.remove(old_image_path)
-        
-        # Salvar nova imagem
-        filename = secure_filename(file.filename)
-        unique_filename = generate_unique_filename(filename)
-        file_path = os.path.join(app.config['PROFILE_PICS'], unique_filename)
-        file.save(file_path)
-        
-        # Atualizar usuário
-        user.profile_image = unique_filename
-        db.session.commit()
-        
-        flash(_('Imagem de perfil atualizada com sucesso!'))
+        try:
+            # Excluir imagem antiga se existir
+            user = User.query.get(current_user.id)
+            if user.profile_image:
+                old_image_path = os.path.join(app.config['PROFILE_PICS'], user.profile_image)
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
+            
+            # Salvar nova imagem
+            filename = secure_filename(file.filename)
+            unique_filename = generate_unique_filename(filename)
+            file_path = os.path.join(app.config['PROFILE_PICS'], unique_filename)
+            file.save(file_path)
+            
+            # Atualizar usuário
+            user.profile_image = unique_filename
+            db.session.commit()
+            
+            flash(_('Imagem de perfil atualizada com sucesso!'))
+            app.logger.info(f'Imagem de perfil atualizada: {unique_filename}')
+        except Exception as e:
+            flash(_('Erro ao salvar a imagem de perfil'))
+            app.logger.error(f'Erro ao salvar imagem de perfil: {str(e)}')
     else:
         flash(_('Tipo de arquivo não permitido'))
         
@@ -560,43 +629,59 @@ def upload_profile_image():
 @app.route('/admin/add_certificate', methods=['POST'])
 @login_required
 def add_certificate():
-    # Obter dados do formulário
-    title = request.form.get('title')
-    title_en = request.form.get('title_en')
-    institution = request.form.get('institution')
-    institution_en = request.form.get('institution_en')
-    date_completed = datetime.strptime(request.form.get('date_completed'), '%Y-%m-%d') if request.form.get('date_completed') else None
-    description = request.form.get('description')
-    description_en = request.form.get('description_en')
-    in_progress = True if request.form.get('in_progress') else False
-    
-    # Criar novo certificado com suporte bilíngue
-    new_certificate = Certificate(
-        title=title,
-        title_en=title_en,
-        institution=institution,
-        institution_en=institution_en,
-        date_completed=date_completed,
-        description=description,
-        description_en=description_en,
-        in_progress=in_progress
-    )
-    
-    # Processar imagem se enviada
-    if 'certificate_image' in request.files:
-        file = request.files['certificate_image']
-        if file and file.filename != '' and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            unique_filename = generate_unique_filename(filename)
-            file_path = os.path.join(app.config['CERTIFICATE_IMGS'], unique_filename)
-            file.save(file_path)
-            new_certificate.image = unique_filename
-    
-    # Salvar no banco de dados
-    db.session.add(new_certificate)
-    db.session.commit()
-    
-    flash(_('Certificado adicionado com sucesso!'))
+    try:
+        # Obter dados do formulário
+        title = request.form.get('title')
+        title_en = request.form.get('title_en')
+        institution = request.form.get('institution')
+        institution_en = request.form.get('institution_en')
+        date_completed = None
+        
+        # Converter a data se fornecida
+        if request.form.get('date_completed'):
+            try:
+                date_completed = datetime.strptime(request.form.get('date_completed'), '%Y-%m-%d')
+            except ValueError:
+                flash(_('Formato de data inválido'))
+                return redirect(url_for('admin'))
+                
+        description = request.form.get('description')
+        description_en = request.form.get('description_en')
+        in_progress = True if request.form.get('in_progress') else False
+        
+        # Criar novo certificado com suporte bilíngue
+        new_certificate = Certificate(
+            title=title,
+            title_en=title_en,
+            institution=institution,
+            institution_en=institution_en,
+            date_completed=date_completed,
+            description=description,
+            description_en=description_en,
+            in_progress=in_progress
+        )
+        
+        # Processar imagem se enviada
+        if 'certificate_image' in request.files:
+            file = request.files['certificate_image']
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                unique_filename = generate_unique_filename(filename)
+                file_path = os.path.join(app.config['CERTIFICATE_IMGS'], unique_filename)
+                file.save(file_path)
+                new_certificate.image = unique_filename
+        
+        # Salvar no banco de dados
+        db.session.add(new_certificate)
+        db.session.commit()
+        
+        app.logger.info(f'Certificado adicionado: {title}')
+        flash(_('Certificado adicionado com sucesso!'))
+    except Exception as e:
+        app.logger.error(f'Erro ao adicionar certificado: {str(e)}')
+        flash(_('Erro ao adicionar certificado'))
+        db.session.rollback()
+        
     return redirect(url_for('admin'))
 
 # Função para editar certificado (CRUD - U)
@@ -606,37 +691,54 @@ def edit_certificate(id):
     certificate = Certificate.query.get_or_404(id)
     
     if request.method == 'POST':
-        # Atualizar campos em português e inglês
-        certificate.title = request.form.get('title')
-        certificate.title_en = request.form.get('title_en')
-        certificate.institution = request.form.get('institution')
-        certificate.institution_en = request.form.get('institution_en')
-        certificate.date_completed = datetime.strptime(request.form.get('date_completed'), '%Y-%m-%d') if request.form.get('date_completed') else None
-        certificate.description = request.form.get('description')
-        certificate.description_en = request.form.get('description_en')
-        certificate.in_progress = True if request.form.get('in_progress') else False
-        
-        # Processar imagem se enviada
-        if 'certificate_image' in request.files:
-            file = request.files['certificate_image']
-            if file and file.filename != '' and allowed_file(file.filename):
-                # Excluir imagem antiga se existir
-                if certificate.image:
-                    old_image_path = os.path.join(app.config['CERTIFICATE_IMGS'], certificate.image)
-                    if os.path.exists(old_image_path):
-                        os.remove(old_image_path)
+        try:
+            # Atualizar campos em português e inglês
+            certificate.title = request.form.get('title')
+            certificate.title_en = request.form.get('title_en')
+            certificate.institution = request.form.get('institution')
+            certificate.institution_en = request.form.get('institution_en')
+            
+            # Converter a data se fornecida
+            if request.form.get('date_completed'):
+                try:
+                    certificate.date_completed = datetime.strptime(request.form.get('date_completed'), '%Y-%m-%d')
+                except ValueError:
+                    flash(_('Formato de data inválido'))
+                    return redirect(url_for('edit_certificate', id=id))
+            else:
+                certificate.date_completed = None
                 
-                # Salvar nova imagem
-                filename = secure_filename(file.filename)
-                unique_filename = generate_unique_filename(filename)
-                file_path = os.path.join(app.config['CERTIFICATE_IMGS'], unique_filename)
-                file.save(file_path)
-                certificate.image = unique_filename
-        
-        # Salvar alterações
-        db.session.commit()
-        flash(_('Certificado atualizado com sucesso!'))
-        return redirect(url_for('admin'))
+            certificate.description = request.form.get('description')
+            certificate.description_en = request.form.get('description_en')
+            certificate.in_progress = True if request.form.get('in_progress') else False
+            
+            # Processar imagem se enviada
+            if 'certificate_image' in request.files:
+                file = request.files['certificate_image']
+                if file and file.filename != '' and allowed_file(file.filename):
+                    # Excluir imagem antiga se existir
+                    if certificate.image:
+                        old_image_path = os.path.join(app.config['CERTIFICATE_IMGS'], certificate.image)
+                        if os.path.exists(old_image_path):
+                            os.remove(old_image_path)
+                    
+                    # Salvar nova imagem
+                    filename = secure_filename(file.filename)
+                    unique_filename = generate_unique_filename(filename)
+                    file_path = os.path.join(app.config['CERTIFICATE_IMGS'], unique_filename)
+                    file.save(file_path)
+                    certificate.image = unique_filename
+            
+            # Salvar alterações
+            db.session.commit()
+            app.logger.info(f'Certificado atualizado: {certificate.title} (ID: {id})')
+            flash(_('Certificado atualizado com sucesso!'))
+            return redirect(url_for('admin'))
+        except Exception as e:
+            app.logger.error(f'Erro ao atualizar certificado: {str(e)}')
+            flash(_('Erro ao atualizar certificado'))
+            db.session.rollback()
+            return redirect(url_for('edit_certificate', id=id))
     
     # Renderizar formulário de edição
     return render_template('edit_certificate.html', certificate=certificate, user=current_user)
@@ -645,62 +747,76 @@ def edit_certificate(id):
 @app.route('/admin/delete_certificate/<int:id>', methods=['POST'])
 @login_required
 def delete_certificate(id):
-    certificate = Certificate.query.get_or_404(id)
+    try:
+        certificate = Certificate.query.get_or_404(id)
+        
+        # Remover imagem se existir
+        if certificate.image:
+            image_path = os.path.join(app.config['CERTIFICATE_IMGS'], certificate.image)
+            if os.path.exists(image_path):
+                os.remove(image_path)
+        
+        # Excluir do banco de dados
+        db.session.delete(certificate)
+        db.session.commit()
+        
+        app.logger.info(f'Certificado excluído: ID {id}')
+        flash(_('Certificado excluído com sucesso!'))
+    except Exception as e:
+        app.logger.error(f'Erro ao excluir certificado: {str(e)}')
+        flash(_('Erro ao excluir certificado'))
+        db.session.rollback()
     
-    # Remover imagem se existir
-    if certificate.image:
-        image_path = os.path.join(app.config['CERTIFICATE_IMGS'], certificate.image)
-        if os.path.exists(image_path):
-            os.remove(image_path)
-    
-    # Excluir do banco de dados
-    db.session.delete(certificate)
-    db.session.commit()
-    
-    flash(_('Certificado excluído com sucesso!'))
     return redirect(url_for('admin'))
 
 # Função para adicionar projeto (CRUD - C)
 @app.route('/admin/add_project', methods=['POST'])
 @login_required
 def add_project():
-    # Obter dados do formulário
-    title = request.form.get('title')
-    title_en = request.form.get('title_en')
-    subtitle = request.form.get('subtitle')
-    subtitle_en = request.form.get('subtitle_en')
-    description = request.form.get('description')
-    description_en = request.form.get('description_en')
-    technologies = request.form.get('technologies')
-    in_progress = True if request.form.get('in_progress') else False
+    try:
+        # Obter dados do formulário
+        title = request.form.get('title')
+        title_en = request.form.get('title_en')
+        subtitle = request.form.get('subtitle')
+        subtitle_en = request.form.get('subtitle_en')
+        description = request.form.get('description')
+        description_en = request.form.get('description_en')
+        technologies = request.form.get('technologies')
+        in_progress = True if request.form.get('in_progress') else False
+        
+        # Criar novo projeto com suporte bilíngue
+        new_project = Project(
+            title=title,
+            title_en=title_en,
+            subtitle=subtitle,
+            subtitle_en=subtitle_en,
+            description=description,
+            description_en=description_en,
+            technologies=technologies,
+            in_progress=in_progress
+        )
+        
+        # Processar imagem se enviada
+        if 'project_image' in request.files:
+            file = request.files['project_image']
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                unique_filename = generate_unique_filename(filename)
+                file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
+                file.save(file_path)
+                new_project.image = unique_filename
+        
+        # Salvar no banco de dados
+        db.session.add(new_project)
+        db.session.commit()
+        
+        app.logger.info(f'Projeto adicionado: {title}')
+        flash(_('Projeto adicionado com sucesso!'))
+    except Exception as e:
+        app.logger.error(f'Erro ao adicionar projeto: {str(e)}')
+        flash(_('Erro ao adicionar projeto'))
+        db.session.rollback()
     
-    # Criar novo projeto com suporte bilíngue
-    new_project = Project(
-        title=title,
-        title_en=title_en,
-        subtitle=subtitle,
-        subtitle_en=subtitle_en,
-        description=description,
-        description_en=description_en,
-        technologies=technologies,
-        in_progress=in_progress
-    )
-    
-    # Processar imagem se enviada
-    if 'project_image' in request.files:
-        file = request.files['project_image']
-        if file and file.filename != '' and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            unique_filename = generate_unique_filename(filename)
-            file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
-            file.save(file_path)
-            new_project.image = unique_filename
-    
-    # Salvar no banco de dados
-    db.session.add(new_project)
-    db.session.commit()
-    
-    flash(_('Projeto adicionado com sucesso!'))
     return redirect(url_for('admin'))
 
 # Função para editar projeto (CRUD - U)
@@ -710,37 +826,44 @@ def edit_project(id):
     project = Project.query.get_or_404(id)
     
     if request.method == 'POST':
-        # Atualizar campos em português e inglês
-        project.title = request.form.get('title')
-        project.title_en = request.form.get('title_en')
-        project.subtitle = request.form.get('subtitle')
-        project.subtitle_en = request.form.get('subtitle_en')
-        project.description = request.form.get('description')
-        project.description_en = request.form.get('description_en')
-        project.technologies = request.form.get('technologies')
-        project.in_progress = True if request.form.get('in_progress') else False
-        
-        # Processar imagem se enviada
-        if 'project_image' in request.files:
-            file = request.files['project_image']
-            if file and file.filename != '' and allowed_file(file.filename):
-                # Excluir imagem antiga se existir
-                if project.image:
-                    old_image_path = os.path.join(app.config['PROJECT_IMGS'], project.image)
-                    if os.path.exists(old_image_path):
-                        os.remove(old_image_path)
-                
-                # Salvar nova imagem
-                filename = secure_filename(file.filename)
-                unique_filename = generate_unique_filename(filename)
-                file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
-                file.save(file_path)
-                project.image = unique_filename
-        
-        # Salvar alterações
-        db.session.commit()
-        flash(_('Projeto atualizado com sucesso!'))
-        return redirect(url_for('admin'))
+        try:
+            # Atualizar campos em português e inglês
+            project.title = request.form.get('title')
+            project.title_en = request.form.get('title_en')
+            project.subtitle = request.form.get('subtitle')
+            project.subtitle_en = request.form.get('subtitle_en')
+            project.description = request.form.get('description')
+            project.description_en = request.form.get('description_en')
+            project.technologies = request.form.get('technologies')
+            project.in_progress = True if request.form.get('in_progress') else False
+            
+            # Processar imagem se enviada
+            if 'project_image' in request.files:
+                file = request.files['project_image']
+                if file and file.filename != '' and allowed_file(file.filename):
+                    # Excluir imagem antiga se existir
+                    if project.image:
+                        old_image_path = os.path.join(app.config['PROJECT_IMGS'], project.image)
+                        if os.path.exists(old_image_path):
+                            os.remove(old_image_path)
+                    
+                    # Salvar nova imagem
+                    filename = secure_filename(file.filename)
+                    unique_filename = generate_unique_filename(filename)
+                    file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
+                    file.save(file_path)
+                    project.image = unique_filename
+            
+            # Salvar alterações
+            db.session.commit()
+            app.logger.info(f'Projeto atualizado: {project.title} (ID: {id})')
+            flash(_('Projeto atualizado com sucesso!'))
+            return redirect(url_for('admin'))
+        except Exception as e:
+            app.logger.error(f'Erro ao atualizar projeto: {str(e)}')
+            flash(_('Erro ao atualizar projeto'))
+            db.session.rollback()
+            return redirect(url_for('edit_project', id=id))
     
     # Renderizar formulário de edição
     return render_template('edit_project.html', project=project, user=current_user)
@@ -749,95 +872,114 @@ def edit_project(id):
 @app.route('/admin/delete_project/<int:id>', methods=['POST'])
 @login_required
 def delete_project(id):
-    project = Project.query.get_or_404(id)
+    try:
+        project = Project.query.get_or_404(id)
+        
+        # Remover imagem se existir
+        if project.image:
+            image_path = os.path.join(app.config['PROJECT_IMGS'], project.image)
+            if os.path.exists(image_path):
+                os.remove(image_path)
+        
+        # Excluir do banco de dados
+        db.session.delete(project)
+        db.session.commit()
+        
+        app.logger.info(f'Projeto excluído: ID {id}')
+        flash(_('Projeto excluído com sucesso!'))
+    except Exception as e:
+        app.logger.error(f'Erro ao excluir projeto: {str(e)}')
+        flash(_('Erro ao excluir projeto'))
+        db.session.rollback()
     
-    # Remover imagem se existir
-    if project.image:
-        image_path = os.path.join(app.config['PROJECT_IMGS'], project.image)
-        if os.path.exists(image_path):
-            os.remove(image_path)
-    
-    # Excluir do banco de dados
-    db.session.delete(project)
-    db.session.commit()
-    
-    flash(_('Projeto excluído com sucesso!'))
     return redirect(url_for('admin'))
 
 @app.route('/admin/update_certificate_image/<int:id>', methods=['POST'])
 @login_required
 def update_certificate_image(id):
-    certificate = Certificate.query.get_or_404(id)
-    
-    if 'certificate_image' not in request.files:
-        flash(_('Nenhum arquivo enviado'))
-        return redirect(url_for('admin'))
+    try:
+        certificate = Certificate.query.get_or_404(id)
         
-    file = request.files['certificate_image']
-    
-    if file.filename == '':
-        flash(_('Nenhum arquivo selecionado'))
-        return redirect(url_for('admin'))
+        if 'certificate_image' not in request.files:
+            flash(_('Nenhum arquivo enviado'))
+            return redirect(url_for('admin'))
+            
+        file = request.files['certificate_image']
         
-    if file and allowed_file(file.filename):
-        # Excluir imagem antiga se existir
-        if certificate.image:
-            old_image_path = os.path.join(app.config['CERTIFICATE_IMGS'], certificate.image)
-            if os.path.exists(old_image_path):
-                os.remove(old_image_path)
-        
-        # Salvar nova imagem
-        filename = secure_filename(file.filename)
-        unique_filename = generate_unique_filename(filename)
-        file_path = os.path.join(app.config['CERTIFICATE_IMGS'], unique_filename)
-        file.save(file_path)
-        
-        # Atualizar certificado
-        certificate.image = unique_filename
-        db.session.commit()
-        
-        flash(_('Imagem do certificado atualizada com sucesso!'))
-    else:
-        flash(_('Tipo de arquivo não permitido'))
-        
+        if file.filename == '':
+            flash(_('Nenhum arquivo selecionado'))
+            return redirect(url_for('admin'))
+            
+        if file and allowed_file(file.filename):
+            # Excluir imagem antiga se existir
+            if certificate.image:
+                old_image_path = os.path.join(app.config['CERTIFICATE_IMGS'], certificate.image)
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
+            
+            # Salvar nova imagem
+            filename = secure_filename(file.filename)
+            unique_filename = generate_unique_filename(filename)
+            file_path = os.path.join(app.config['CERTIFICATE_IMGS'], unique_filename)
+            file.save(file_path)
+            
+            # Atualizar certificado
+            certificate.image = unique_filename
+            db.session.commit()
+            
+            app.logger.info(f'Imagem do certificado atualizada: ID {id}')
+            flash(_('Imagem do certificado atualizada com sucesso!'))
+        else:
+            flash(_('Tipo de arquivo não permitido'))
+    except Exception as e:
+        app.logger.error(f'Erro ao atualizar imagem do certificado: {str(e)}')
+        flash(_('Erro ao atualizar imagem do certificado'))
+        db.session.rollback()
+            
     return redirect(url_for('admin'))
 
 @app.route('/admin/update_project_image/<int:id>', methods=['POST'])
 @login_required
 def update_project_image(id):
-    project = Project.query.get_or_404(id)
-    
-    if 'project_image' not in request.files:
-        flash(_('Nenhum arquivo enviado'))
-        return redirect(url_for('admin'))
+    try:
+        project = Project.query.get_or_404(id)
         
-    file = request.files['project_image']
-    
-    if file.filename == '':
-        flash(_('Nenhum arquivo selecionado'))
-        return redirect(url_for('admin'))
+        if 'project_image' not in request.files:
+            flash(_('Nenhum arquivo enviado'))
+            return redirect(url_for('admin'))
+            
+        file = request.files['project_image']
         
-    if file and allowed_file(file.filename):
-        # Excluir imagem antiga se existir
-        if project.image:
-            old_image_path = os.path.join(app.config['PROJECT_IMGS'], project.image)
-            if os.path.exists(old_image_path):
-                os.remove(old_image_path)
-        
-        # Salvar nova imagem
-        filename = secure_filename(file.filename)
-        unique_filename = generate_unique_filename(filename)
-        file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
-        file.save(file_path)
-        
-        # Atualizar projeto
-        project.image = unique_filename
-        db.session.commit()
-        
-        flash(_('Imagem do projeto atualizada com sucesso!'))
-    else:
-        flash(_('Tipo de arquivo não permitido'))
-        
+        if file.filename == '':
+            flash(_('Nenhum arquivo selecionado'))
+            return redirect(url_for('admin'))
+            
+        if file and allowed_file(file.filename):
+            # Excluir imagem antiga se existir
+            if project.image:
+                old_image_path = os.path.join(app.config['PROJECT_IMGS'], project.image)
+                if os.path.exists(old_image_path):
+                    os.remove(old_image_path)
+            
+            # Salvar nova imagem
+            filename = secure_filename(file.filename)
+            unique_filename = generate_unique_filename(filename)
+            file_path = os.path.join(app.config['PROJECT_IMGS'], unique_filename)
+            file.save(file_path)
+            
+            # Atualizar projeto
+            project.image = unique_filename
+            db.session.commit()
+            
+            app.logger.info(f'Imagem do projeto atualizada: ID {id}')
+            flash(_('Imagem do projeto atualizada com sucesso!'))
+        else:
+            flash(_('Tipo de arquivo não permitido'))
+    except Exception as e:
+        app.logger.error(f'Erro ao atualizar imagem do projeto: {str(e)}')
+        flash(_('Erro ao atualizar imagem do projeto'))
+        db.session.rollback()
+            
     return redirect(url_for('admin'))
 
 def migrate_bilingual_columns():
@@ -855,32 +997,32 @@ def migrate_bilingual_columns():
             # Adicionar colunas à tabela certificate
             if 'title_en' not in certificate_columns:
                 conn.execute(text("ALTER TABLE certificate ADD COLUMN title_en VARCHAR(200)"))
-                print("Coluna 'title_en' adicionada à tabela 'certificate'")
+                app.logger.info("Coluna 'title_en' adicionada à tabela 'certificate'")
                 
             if 'institution_en' not in certificate_columns:
                 conn.execute(text("ALTER TABLE certificate ADD COLUMN institution_en VARCHAR(100)"))
-                print("Coluna 'institution_en' adicionada à tabela 'certificate'")
+                app.logger.info("Coluna 'institution_en' adicionada à tabela 'certificate'")
                 
             if 'description_en' not in certificate_columns:
                 conn.execute(text("ALTER TABLE certificate ADD COLUMN description_en TEXT"))
-                print("Coluna 'description_en' adicionada à tabela 'certificate'")
+                app.logger.info("Coluna 'description_en' adicionada à tabela 'certificate'")
                 
             # Adicionar colunas à tabela project
             if 'title_en' not in project_columns:
                 conn.execute(text("ALTER TABLE project ADD COLUMN title_en VARCHAR(200)"))
-                print("Coluna 'title_en' adicionada à tabela 'project'")
+                app.logger.info("Coluna 'title_en' adicionada à tabela 'project'")
                 
             if 'subtitle_en' not in project_columns:
                 conn.execute(text("ALTER TABLE project ADD COLUMN subtitle_en VARCHAR(200)"))
-                print("Coluna 'subtitle_en' adicionada à tabela 'project'")
+                app.logger.info("Coluna 'subtitle_en' adicionada à tabela 'project'")
                 
             if 'description_en' not in project_columns:
                 conn.execute(text("ALTER TABLE project ADD COLUMN description_en TEXT"))
-                print("Coluna 'description_en' adicionada à tabela 'project'")
+                app.logger.info("Coluna 'description_en' adicionada à tabela 'project'")
             
             conn.commit()
             
-        print("Migração para colunas bilíngues concluída!")
+        app.logger.info("Migração para colunas bilíngues concluída!")
 
 def migrate_database():
     """Adiciona novas colunas às tabelas existentes."""
@@ -894,18 +1036,21 @@ def migrate_database():
             with db.engine.connect() as conn:
                 conn.execute(text("ALTER TABLE certificate ADD COLUMN in_progress BOOLEAN DEFAULT 0"))
                 conn.commit()
-                print("Coluna 'in_progress' adicionada à tabela 'certificate'")
+                app.logger.info("Coluna 'in_progress' adicionada à tabela 'certificate'")
         
         # Verificar e adicionar coluna in_progress à tabela project
         if 'in_progress' not in [col['name'] for col in inspector.get_columns('project')]:
             with db.engine.connect() as conn:
                 conn.execute(text("ALTER TABLE project ADD COLUMN in_progress BOOLEAN DEFAULT 0"))
                 conn.commit()
-                print("Coluna 'in_progress' adicionada à tabela 'project'")
+                app.logger.info("Coluna 'in_progress' adicionada à tabela 'project'")
         
-        print("Migração do banco de dados concluída!")
+        app.logger.info("Migração do banco de dados concluída!")
 
 def initialize_db():
+    """
+    Inicializa o banco de dados e cria dados iniciais se necessário.
+    """
     with app.app_context():
         # Criar as tabelas
         db.create_all()
@@ -919,8 +1064,11 @@ def initialize_db():
         
         # Apenas adicionar dados iniciais se o admin não existir
         if not admin_exists:
+            # Gerar uma senha segura para o admin em produção
+            admin_password = os.environ.get('ADMIN_PASSWORD', 'change-this-in-production')
+            
             admin = User(username='admin')
-            admin.set_password('passwordghafhfaso')  # CHANGE THIS PASSWORD IN PRODUCTION
+            admin.set_password(admin_password)
             db.session.add(admin)
             
             # Adicionar projetos iniciais do CV
@@ -974,9 +1122,9 @@ def initialize_db():
                 db.session.add(cert)
                 
             db.session.commit()
-            print("Banco de dados inicializado com dados padrão.")
+            app.logger.info("Banco de dados inicializado com dados padrão.")
         else:
-            print("Usuário admin já existe. Pulando inicialização de dados.")
+            app.logger.info("Usuário admin já existe. Pulando inicialização de dados.")
 
 @app.route('/obrigado')
 def obrigado():
@@ -984,4 +1132,11 @@ def obrigado():
 
 if __name__ == '__main__':
     initialize_db()
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
+    
+    # Configurar porta do servidor baseada em variável de ambiente ou padrão
+    port = int(os.environ.get('PORT', 5000))
+    
+    # Ativar modo de debug apenas em ambiente de desenvolvimento
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    
+    app.run(host='0.0.0.0', port=port, debug=debug)
